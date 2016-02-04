@@ -92,45 +92,42 @@ def depthFirstSearch(problem):
   e = Directions.EAST
 
   visited = [] # a list of visited states (tuples) with no duplicates
-  frontier = util.Stack() # a stack of successors
-  moves = [] # a list of directions to get from start to goal (what this method will return)
+  frontier = util.Stack() # a stack of form (coord, list of moves)
+  moves = [] # a list of moves (s,w,n,e) to be returned by this method
   
-  if problem.isGoalState(problem.getStartState()): 
+  startState = problem.getStartState() 
+  
+  if problem.isGoalState(startState): 
       return moves
       
-  visited.append(problem.getStartState())
-  for i in problem.getSuccessors(problem.getStartState()):
-      stack.push((problem.getStartState(), ))
+  visited.append(startState)
+  for i in problem.getSuccessors(startState):
+      frontier.push( (i[0], [i[1]]) ) 
   
-  while(not frontier.isEmpty()):
-       current = frontier.pop() # current is a TUPLE (coord, direction, cost)
-       state = current[0] # grab a COORDINATE and move to it
+  while not frontier.isEmpty():
+       current = frontier.pop() # current is a TUPLE (coord, list of moves)
+       currState = current[0] # grab a COORDINATE and move to it
+       currMoves = current[1] # grab list of MOVES so far
 
        # Check the state
-       if problem.isGoalState(state):
-           return moves
-       # BAD MOVE if there's no new moves afterwards!
-       isBad = True
-       for j in problem.getSuccessors(state):
+       if problem.isGoalState(currState):
+           return currMoves
+
+       options = problem.getSuccessors(currState)
+       for j in options:
            if j[0] not in visited:
-               isBad = False
-       if isBad:
-           moves.pop() # remove last move
-           bad.append(visited.pop()) # remove this state from visited and add to bad
-       else:
-           visited.append(state) # add it to my visited list
-           s = current[1] # add the move I just made to my move list
-           if s == "South":
-               moves.append(s)
-           elif s == "West":
-               moves.append(w)
-           elif s == "North":
-               moves.append(n)
-           else:
-               moves.append(e)
-           for i in problem.getSuccessors(state):
-               if i[0] not in visited and not in bad:
-                   frontier.push(i)
+               visited.append(j[0]) # add it to my visited list
+               s = j[1]
+               if s == "South":
+                   currMoves.append(s)
+               elif s == "West":
+                   currMoves.append(w)
+               elif s == "North":
+                   currMoves.append(n)
+               else:
+                   currMoves.append(e)
+               tempTuple = (j[0],currMoves)
+           frontier.push(tempTuple)
                
   util.raiseNotDefined()
 
