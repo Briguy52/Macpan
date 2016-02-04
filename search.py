@@ -101,17 +101,19 @@ def depthFirstSearch(problem):
       return moves
       
   visited.append(startState)
-  for i in problem.getSuccessors(startState):
-      frontier.push( (i[0], [i[1]]) ) 
+ 
+  frontier.push( (startState, moves) ) 
   
   while not frontier.isEmpty():
        current = frontier.pop() # current is a TUPLE (coord, list of moves)
        currState = current[0] # grab a COORDINATE and move to it
        currMoves = current[1] # grab list of MOVES so far
-
+       
        # Check the state
        if problem.isGoalState(currState):
-           return currMoves
+           print(currMoves)
+           break
+           # return currMoves
 
        options = problem.getSuccessors(currState)
        for j in options:
@@ -119,15 +121,14 @@ def depthFirstSearch(problem):
                visited.append(j[0]) # add it to my visited list
                s = j[1]
                if s == "South":
-                   currMoves.append(s)
+                   currMoves + [s]
                elif s == "West":
-                   currMoves.append(w)
+                   currMoves + [w]
                elif s == "North":
-                   currMoves.append(n)
+                   currMoves + [n]
                else:
-                   currMoves.append(e)
-               tempTuple = (j[0],currMoves)
-           frontier.push(tempTuple)
+                   currMoves + [e]
+           frontier.push( (j[0],currMoves) )
                
   util.raiseNotDefined()
 
