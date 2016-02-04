@@ -95,6 +95,7 @@ def depthFirstSearch(problem):
   stack = util.Stack() # a stack of successors
   moves = [] # a list of directions to get from start to goal (what this method will return)
   
+  visited.add(problem.getStartState())
   for i in problem.getSuccessors(problem.getStartState()):
       stack.push(i)
   
@@ -102,18 +103,16 @@ def depthFirstSearch(problem):
        current = stack.pop() # current is a tuple of things
        state = current[0]
        if not problem.getSuccessors(current[0]) and not problem.isGoalState(current[0]):
-           diff = stack.pop()
-           stepsBack = abs(diff[0][0]-current[0][0]) + abs(diff[0][1]-current[0][1]) - 1
-           for i in range(stepsBack):
-               moves.pop()
-       
-       visited.append(current[0])
-       moves.append(current[1][0]) # append first char of direction name
-       options = problem.getSuccessors(current[0]) # options is a list of choices
-       for i in options:
-           stack.push(i)
-       if problem.isGoalState(current[0]):
-           print(moves)
+           moveTo = visited[-1] # grab last state from visited list
+           moves.pop() # remove last move from list
+       else:
+           visited.append(current[0])
+           moves.append(current[1][0]) # append first char of direction name
+           options = problem.getSuccessors(current[0]) # options is a list of choices
+           for i in options:
+               stack.push(i)
+           if problem.isGoalState(current[0]):
+               print(moves)
            
   
   util.raiseNotDefined()
