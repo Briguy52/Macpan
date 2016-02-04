@@ -91,25 +91,35 @@ def depthFirstSearch(problem):
   n = Directions.NORTH
   e = Directions.EAST
 
-  visited = [] # a list of visited states (tuples) with no duplicates!
-  stack = util.Stack() # a stack of successors
+  visited = [] # a list of visited states (tuples) with no duplicates
+  frontier = util.Stack() # a stack of successors
   moves = [] # a list of directions to get from start to goal (what this method will return)
   
+  if problem.isGoalState(problem.getStartState()): 
+      return moves
+      
   visited.append(problem.getStartState())
   for i in problem.getSuccessors(problem.getStartState()):
-      stack.push(i)
+      stack.push((problem.getStartState(), ))
   
-  while(not stack.isEmpty()):
-       current = stack.pop() 
-       state = current[0] # grab a POTENTIAL coordinate to move to  
-       # DON'T go to a coord you've already visited
-       if state in visited:
-           continue
+  while(not frontier.isEmpty()):
+       current = frontier.pop() # current is a TUPLE (coord, direction, cost)
+       state = current[0] # grab a COORDINATE and move to it
+
+       # Check the state
+       if problem.isGoalState(state):
+           return moves
+       # BAD MOVE if there's no new moves afterwards!
+       isBad = True
+       for j in problem.getSuccessors(state):
+           if j[0] not in visited:
+               isBad = False
+       if isBad:
+           moves.pop() # remove last move
+           bad.append(visited.pop()) # remove this state from visited and add to bad
        else:
-           visited.append(current[0])
-           # print("W"==current[1][0])
-           # moves.append(current[1][0]) # append first char of direction name
-           s = current[1]
+           visited.append(state) # add it to my visited list
+           s = current[1] # add the move I just made to my move list
            if s == "South":
                moves.append(s)
            elif s == "West":
@@ -118,11 +128,9 @@ def depthFirstSearch(problem):
                moves.append(n)
            else:
                moves.append(e)
-           if problem.isGoalState(current[0]):
-               return moves
-           options = problem.getSuccessors(current[0]) # options is a list of choices
-           for i in options:
-               stack.push(i)
+           for i in problem.getSuccessors(state):
+               if i[0] not in visited and not in bad:
+                   frontier.push(i)
                
   util.raiseNotDefined()
 
