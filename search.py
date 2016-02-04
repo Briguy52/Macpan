@@ -86,35 +86,44 @@ def depthFirstSearch(problem):
   """
   "*** YOUR CODE HERE ***"
   from game import Directions
-  S = Directions.SOUTH
-  W = Directions.WEST
-  N = Directions.NORTH
-  E = Directions.EAST
+  s = Directions.SOUTH
+  w = Directions.WEST
+  n = Directions.NORTH
+  e = Directions.EAST
 
   visited = [] # a list of visited states (tuples) with no duplicates!
   stack = util.Stack() # a stack of successors
   moves = [] # a list of directions to get from start to goal (what this method will return)
   
-  visited.add(problem.getStartState())
+  visited.append(problem.getStartState())
   for i in problem.getSuccessors(problem.getStartState()):
       stack.push(i)
   
   while(not stack.isEmpty()):
-       current = stack.pop() # current is a tuple of things
-       state = current[0]
-       if not problem.getSuccessors(current[0]) and not problem.isGoalState(current[0]):
-           moveTo = visited[-1] # grab last state from visited list
-           moves.pop() # remove last move from list
+       current = stack.pop() 
+       state = current[0] # grab a POTENTIAL coordinate to move to  
+       # DON'T go to a coord you've already visited
+       if state in visited:
+           continue
        else:
            visited.append(current[0])
-           moves.append(current[1][0]) # append first char of direction name
+           # print("W"==current[1][0])
+           # moves.append(current[1][0]) # append first char of direction name
+           s = current[1]
+           if s == "South":
+               moves.append(s)
+           elif s == "West":
+               moves.append(w)
+           elif s == "North":
+               moves.append(n)
+           else:
+               moves.append(e)
+           if problem.isGoalState(current[0]):
+               return moves
            options = problem.getSuccessors(current[0]) # options is a list of choices
            for i in options:
                stack.push(i)
-           if problem.isGoalState(current[0]):
-               print(moves)
-           
-  
+               
   util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
