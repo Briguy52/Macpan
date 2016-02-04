@@ -99,36 +99,35 @@ def depthFirstSearch(problem):
   
   if problem.isGoalState(startState): 
       return moves
-      
-  visited.append(startState)
- 
-  frontier.push( (startState, moves) ) 
   
-  while not frontier.isEmpty():
-       current = frontier.pop() # current is a TUPLE (coord, list of moves)
-       currState = current[0] # grab a COORDINATE and move to it
-       currMoves = current[1] # grab list of MOVES so far
-       
-       # Check the state
-       if problem.isGoalState(currState):
-           print(currMoves)
-           break
-           # return currMoves
-
-       options = problem.getSuccessors(currState)
-       for j in options:
-           if j[0] not in visited:
-               visited.append(j[0]) # add it to my visited list
-               s = j[1]
-               if s == "South":
-                   currMoves + [s]
-               elif s == "West":
-                   currMoves + [w]
-               elif s == "North":
-                   currMoves + [n]
-               else:
-                   currMoves + [e]
-           frontier.push( (j[0],currMoves) )
+  visited.append(problem.getStartState())
+    for i in problem.getSuccessors(problem.getStartState()):
+        stack.push(i)
+  
+    while(not stack.isEmpty()):
+         current = stack.pop() 
+         state = current[0] # grab a POTENTIAL coordinate to move to  
+         # DON'T go to a coord you've already visited
+         if state in visited:
+             continue
+         else:
+             visited.append(current[0])
+             # print("W"==current[1][0])
+             # moves.append(current[1][0]) # append first char of direction name
+             s = current[1]
+             if s == "South":
+                 moves.append(s)
+             elif s == "West":
+                 moves.append(w)
+             elif s == "North":
+                 moves.append(n)
+             else:
+                 moves.append(e)
+             if problem.isGoalState(current[0]):
+                 return moves
+             options = problem.getSuccessors(current[0]) # options is a list of choices
+             for i in options:
+                 stack.push(i)
                
   util.raiseNotDefined()
 
