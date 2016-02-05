@@ -91,43 +91,43 @@ def depthFirstSearch(problem):
   n = Directions.NORTH
   e = Directions.EAST
 
-  visited = [] # a list of visited states (tuples) with no duplicates
-  frontier = util.Stack() # a stack of form (coord, list of moves)
-  moves = [] # a list of moves (s,w,n,e) to be returned by this method
+  visited = [] # a list of tuples I have been to (x,y)
+  frontier = util.Stack() # a stack of tuples to visit ( (x,y), [s,w,n,e], 1 )
   
-  startState = problem.getStartState() 
+  startState = problem.getStartState() # starting coords
   
-  if problem.isGoalState(startState): 
+  if problem.isGoalState(startState): # no moves needed if start at goal
       return moves
-  
-  visited.append(problem.getStartState())
-    for i in problem.getSuccessors(problem.getStartState()):
-        stack.push(i)
-  
-    while(not stack.isEmpty()):
-         current = stack.pop() 
-         state = current[0] # grab a POTENTIAL coordinate to move to  
-         # DON'T go to a coord you've already visited
-         if state in visited:
-             continue
-         else:
-             visited.append(current[0])
-             # print("W"==current[1][0])
-             # moves.append(current[1][0]) # append first char of direction name
-             s = current[1]
-             if s == "South":
-                 moves.append(s)
-             elif s == "West":
-                 moves.append(w)
-             elif s == "North":
-                 moves.append(n)
-             else:
-                 moves.append(e)
-             if problem.isGoalState(current[0]):
-                 return moves
-             options = problem.getSuccessors(current[0]) # options is a list of choices
-             for i in options:
-                 stack.push(i)
+      
+  frontier.push( (startState,[],0) )
+
+  while(not frontier.isEmpty()):
+       current = frontier.pop() 
+       state = current[0] # grab the COORDINATE we're on right now
+       moves = current[1] # grab the current list of MOVES taken to get to this spot
+       if problem.isGoalState(state): 
+           return moves
+       if state in visited:  # DON'T go to a coord you've already visited
+           continue
+       visited.append(state)
+       options = problem.getSuccessors(state) # options is a list of choices
+       for i in options:
+           newState = i[0]
+           newMove = i[1] 
+           if newMove == "South":
+               # moves.append(s)
+               moves += [s]
+           elif newMove == "West":
+               # moves.append(w)
+               moves += [w]
+           elif newMove == "North":
+               # moves.append(n)
+               moves += [n]
+           else:
+               # moves.append(e)
+               moves += [e]
+           frontier.push( (newState, moves, 0) )
+    
                
   util.raiseNotDefined()
 
