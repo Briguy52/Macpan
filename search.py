@@ -107,6 +107,8 @@ def depthFirstSearch(problem):
        moves = current[1] # grab the current list of MOVES taken to get to this spot
        if problem.isGoalState(state): 
            return moves
+           # raw_input("Press enter to continue...")
+           # break
        if state in visited:  # DON'T go to a coord you've already visited
            continue
        visited.append(state)
@@ -114,19 +116,18 @@ def depthFirstSearch(problem):
        for i in options:
            newState = i[0]
            newMove = i[1] 
-           if newMove == "South":
-               # moves.append(s)
-               moves += [s]
-           elif newMove == "West":
-               # moves.append(w)
-               moves += [w]
-           elif newMove == "North":
-               # moves.append(n)
-               moves += [n]
-           else:
-               # moves.append(e)
-               moves += [e]
-           frontier.push( (newState, moves, 0) )
+           newMoves = moves[:]
+           if newState not in visited:
+               if newMove == "South":
+                   newMoves.append(s)
+               elif newMove == "West":
+                   newMoves.append(w)
+               elif newMove == "North":
+                   newMoves.append(n)
+               else:
+                   newMoves.append(e)
+               print( (newState, newMoves) )
+               frontier.push( (newState, newMoves, 0) )
     
                
   util.raiseNotDefined()
