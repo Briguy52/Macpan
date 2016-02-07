@@ -138,8 +138,54 @@ def breadthFirstSearch(problem):
   [2nd Edition: p 73, 3rd Edition: p 82]
   """
   "*** YOUR CODE HERE ***"
-  util.raiseNotDefined()
+  
+  "*** YOUR CODE HERE ***"
+  from game import Directions
+  s = Directions.SOUTH
+  w = Directions.WEST
+  n = Directions.NORTH
+  e = Directions.EAST
+
+  visited = [] # a list of tuples I have been to (x,y)
+  frontier = util.Queue() # a stack of tuples to visit ( (x,y), [s,w,n,e], 1 )
+  
+  startState = problem.getStartState() # starting coords
+  
+  if problem.isGoalState(startState): # no moves needed if start at goal
+      return moves
       
+  frontier.push( (startState,[],0) )
+
+  while(not frontier.isEmpty()):
+       current = frontier.pop() 
+       state = current[0] # grab the COORDINATE we're on right now
+       moves = current[1] # grab the current list of MOVES taken to get to this spot
+       if problem.isGoalState(state): 
+           return moves
+           # raw_input("Press enter to continue...")
+           # break
+       if state in visited:  # DON'T go to a coord you've already visited
+           continue
+       visited.append(state)
+       options = problem.getSuccessors(state) # options is a list of choices
+       for i in options:
+           newState = i[0]
+           newMove = i[1] 
+           newMoves = moves[:]
+           if newState not in visited:
+               if newMove == "South":
+                   newMoves.append(s)
+               elif newMove == "West":
+                   newMoves.append(w)
+               elif newMove == "North":
+                   newMoves.append(n)
+               else:
+                   newMoves.append(e)
+               print( (newState, newMoves) )
+               frontier.push( (newState, newMoves, 0) )
+               
+  util.raiseNotDefined()
+  
 def uniformCostSearch(problem):
   "Search the node of least total cost first. "
   "*** YOUR CODE HERE ***"
