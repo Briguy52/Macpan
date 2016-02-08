@@ -255,6 +255,71 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
   "Search the node that has the lowest combined cost and heuristic first."
   "*** YOUR CODE HERE ***"
+  
+  # 'lowest combined cost' --> use UCS algo
+  # 'lowest heuristic' 
+      # def manhattanHeuristic(position, problem, info={}):
+      #    "The Manhattan distance heuristic for a PositionSearchProblem"
+      #    xy1 = position
+      #    xy2 = problem.goal
+      #    return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
+      
+  # total cost: UCS cost + heuristic 
+  
+  from game import Directions
+  s = Directions.SOUTH
+  w = Directions.WEST
+  n = Directions.NORTH
+  e = Directions.EAST
+  
+  # Format for nodes: ( (x,y) , [path], totalCost ) - now BOTH path and cost increment!
+  # goal: minimize totalCost
+  # return: [path]
+  
+  visited = [] # a list of tuples I have been to of form (x,y)
+  
+  def getTotalCost( successor ):
+      return successor[2]
+  
+  frontier = util.PriorityQueueWithFunction(getTotalCost) # a PQ list of neighboring states (make sure to CHECK FOR VISITED!) - PQ gets you the lowest with pop()
+  moves = []
+  
+  startState = problem.getStartState() # starting coords
+  
+  if problem.isGoalState(startState): # no moves needed if start at goal
+      return moves
+      
+  frontier.push( (startState, moves, heuristic(startState,problem) ) ) # push starting state with a TOTAL COST OF 0
+
+  while(not frontier.isEmpty()):
+       current = frontier.pop() # gets you the node with the lowest TOTAL COST (weighting factor)
+       state = current[0] # grab the COORDINATE we're on right now
+       moves = current[1] # grab the current list of MOVES taken to get to this spot
+       cost = current[2] # grab the TOTAL COST so far
+       if problem.isGoalState(state): 
+           return moves
+       if state in visited:  # DON'T go to a coord you've already visited
+           continue
+       visited.append(state)
+       options = problem.getSuccessors(state) # options is a list of choices
+       for i in options:
+           newState = i[0]
+           newMove = i[1] 
+           newCost = i[2]
+           newMoves = moves[:]
+           if newState not in visited:
+               if newMove == "South":
+                   newMoves.append(s)
+               elif newMove == "West":
+                   newMoves.append(w)
+               elif newMove == "North":
+                   newMoves.append(n)
+               else:
+                   newMoves.append(e)
+               frontier.push( (newState, newMoves, cost + newCost + heuristic(newState,problem)) )
+  
+  print("No solution found")
+  
   util.raiseNotDefined()
     
   
