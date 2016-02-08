@@ -216,13 +216,14 @@ def uniformCostSearch(problem):
        moves = current[1] # grab the current list of MOVES taken to get to this spot
        cost = current[2] # grab the TOTAL COST so far
        if problem.isGoalState(state): 
-           # return moves
-           raw_input("Press enter to continue...")
-           break
+           return moves
+           # raw_input("Press enter to continue...")
+           # break
        if state in visited:  # DON'T go to a coord you've already visited
            continue
        visited.append(current)
        options = problem.getSuccessors(state) # options is a list of choices
+       # print(options)
        for i in options:
            newState = i[0]
            newMove = i[1] 
@@ -238,7 +239,7 @@ def uniformCostSearch(problem):
                else:
                    newMoves.append(e)
                # print( (newState, newMoves) )
-               frontier.push( (newState, newMoves, cost + newCost), cost)
+               frontier.push( (newState, newMoves, cost + newCost), cost + newCost)
   
   
   util.raiseNotDefined()
