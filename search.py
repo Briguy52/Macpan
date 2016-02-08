@@ -189,6 +189,58 @@ def breadthFirstSearch(problem):
 def uniformCostSearch(problem):
   "Search the node of least total cost first. "
   "*** YOUR CODE HERE ***"
+  from game import Directions
+  s = Directions.SOUTH
+  w = Directions.WEST
+  n = Directions.NORTH
+  e = Directions.EAST
+  
+  # Format for nodes: ( (x,y) , [path], totalCost ) - now BOTH path and cost increment!
+  # goal: minimize totalCost
+  # return: [path]
+  
+  visited = [] # a list of tuples I have been to of form (x,y)
+  frontier = util.PriorityQueue() # a PQ list of neighboring states (make sure to CHECK FOR VISITED!) - PQ gets you the lowest with pop()
+  moves = []
+  
+  startState = problem.getStartState() # starting coords
+  
+  if problem.isGoalState(startState): # no moves needed if start at goal
+      return moves
+      
+  frontier.push( (startState, moves, 0), 0 ) # push starting state with a TOTAL COST OF 0
+
+  while(not frontier.isEmpty()):
+       current = frontier.pop() # gets you the node with the lowest TOTAL COST (weighting factor)
+       state = current[0] # grab the COORDINATE we're on right now
+       moves = current[1] # grab the current list of MOVES taken to get to this spot
+       cost = current[2] # grab the TOTAL COST so far
+       if problem.isGoalState(state): 
+           # return moves
+           raw_input("Press enter to continue...")
+           break
+       if state in visited:  # DON'T go to a coord you've already visited
+           continue
+       visited.append(current)
+       options = problem.getSuccessors(state) # options is a list of choices
+       for i in options:
+           newState = i[0]
+           newMove = i[1] 
+           newCost = i[2]
+           newMoves = moves[:]
+           if newState not in visited:
+               if newMove == "South":
+                   newMoves.append(s)
+               elif newMove == "West":
+                   newMoves.append(w)
+               elif newMove == "North":
+                   newMoves.append(n)
+               else:
+                   newMoves.append(e)
+               # print( (newState, newMoves) )
+               frontier.push( (newState, newMoves, cost + newCost), cost)
+  
+  
   util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
