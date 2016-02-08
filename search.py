@@ -129,7 +129,7 @@ def depthFirstSearch(problem):
                print( (newState, newMoves) )
                frontier.push( (newState, newMoves, 0) )
     
-               
+  print("No solution found")             
   util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
@@ -183,7 +183,8 @@ def breadthFirstSearch(problem):
                    newMoves.append(e)
                print( (newState, newMoves) )
                frontier.push( (newState, newMoves, 0) )
-               
+  
+  print("No solution found")             
   util.raiseNotDefined()
   
 def uniformCostSearch(problem):
@@ -200,7 +201,11 @@ def uniformCostSearch(problem):
   # return: [path]
   
   visited = [] # a list of tuples I have been to of form (x,y)
-  frontier = util.PriorityQueue() # a PQ list of neighboring states (make sure to CHECK FOR VISITED!) - PQ gets you the lowest with pop()
+  
+  def getTotalCost( successor ):
+      return successor[2]
+  
+  frontier = util.PriorityQueueWithFunction(getTotalCost) # a PQ list of neighboring states (make sure to CHECK FOR VISITED!) - PQ gets you the lowest with pop()
   moves = []
   
   startState = problem.getStartState() # starting coords
@@ -208,7 +213,7 @@ def uniformCostSearch(problem):
   if problem.isGoalState(startState): # no moves needed if start at goal
       return moves
       
-  frontier.push( (startState, moves, 0), 0 ) # push starting state with a TOTAL COST OF 0
+  frontier.push( (startState, moves, 0) ) # push starting state with a TOTAL COST OF 0
 
   while(not frontier.isEmpty()):
        current = frontier.pop() # gets you the node with the lowest TOTAL COST (weighting factor)
@@ -217,13 +222,10 @@ def uniformCostSearch(problem):
        cost = current[2] # grab the TOTAL COST so far
        if problem.isGoalState(state): 
            return moves
-           # raw_input("Press enter to continue...")
-           # break
        if state in visited:  # DON'T go to a coord you've already visited
            continue
-       visited.append(current)
+       visited.append(state)
        options = problem.getSuccessors(state) # options is a list of choices
-       # print(options)
        for i in options:
            newState = i[0]
            newMove = i[1] 
@@ -238,10 +240,9 @@ def uniformCostSearch(problem):
                    newMoves.append(n)
                else:
                    newMoves.append(e)
-               # print( (newState, newMoves) )
-               frontier.push( (newState, newMoves, cost + newCost), cost + newCost)
+               frontier.push( (newState, newMoves, cost + newCost) )
   
-  
+  print("No solution found")
   util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
