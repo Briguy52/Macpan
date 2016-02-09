@@ -84,12 +84,6 @@ def depthFirstSearch(problem):
   print "Start's successors:", problem.getSuccessors(problem.getStartState()) -> Start's successors: [((5, 4), 'South', 1), ((4, 5), 'West', 1)]
 
   """
-  "*** YOUR CODE HERE ***"
-  from game import Directions
-  s = Directions.SOUTH
-  w = Directions.WEST
-  n = Directions.NORTH
-  e = Directions.EAST
 
   visited = [] # a list of tuples I have been to (x,y)
   frontier = util.Stack() # a stack of tuples to visit ( (x,y), [s,w,n,e], 1 )
@@ -107,8 +101,6 @@ def depthFirstSearch(problem):
        moves = current[1] # grab the current list of MOVES taken to get to this spot
        if problem.isGoalState(state): 
            return moves
-           # raw_input("Press enter to continue...")
-           # break
        if state in visited:  # DON'T go to a coord you've already visited
            continue
        visited.append(state)
@@ -116,18 +108,11 @@ def depthFirstSearch(problem):
        for i in options:
            newState = i[0]
            newMove = i[1] 
+           newCost = i[2]
            newMoves = moves[:]
            if newState not in visited:
-               if newMove == "South":
-                   newMoves.append(s)
-               elif newMove == "West":
-                   newMoves.append(w)
-               elif newMove == "North":
-                   newMoves.append(n)
-               else:
-                   newMoves.append(e)
-               print( (newState, newMoves) )
-               frontier.push( (newState, newMoves, 0) )
+               newMoves.append(newMove)
+               frontier.push( (newState, newMoves, newCost) )
     
   print("No solution found")             
   util.raiseNotDefined()
@@ -137,15 +122,6 @@ def breadthFirstSearch(problem):
   Search the shallowest nodes in the search tree first.
   [2nd Edition: p 73, 3rd Edition: p 82]
   """
-  "*** YOUR CODE HERE ***"
-  
-  "*** YOUR CODE HERE ***"
-  from game import Directions
-  s = Directions.SOUTH
-  w = Directions.WEST
-  n = Directions.NORTH
-  e = Directions.EAST
-
   visited = [] # a list of tuples I have been to (x,y)
   frontier = util.Queue() # a stack of tuples to visit ( (x,y), [s,w,n,e], 1 )
   
@@ -162,8 +138,6 @@ def breadthFirstSearch(problem):
        moves = current[1] # grab the current list of MOVES taken to get to this spot
        if problem.isGoalState(state): 
            return moves
-           # raw_input("Press enter to continue...")
-           # break
        if state in visited:  # DON'T go to a coord you've already visited
            continue
        visited.append(state)
@@ -171,30 +145,18 @@ def breadthFirstSearch(problem):
        for i in options:
            newState = i[0]
            newMove = i[1] 
+           newCost = i[2]
            newMoves = moves[:]
            if newState not in visited:
-               if newMove == "South":
-                   newMoves.append(s)
-               elif newMove == "West":
-                   newMoves.append(w)
-               elif newMove == "North":
-                   newMoves.append(n)
-               else:
-                   newMoves.append(e)
-               print( (newState, newMoves) )
-               frontier.push( (newState, newMoves, 0) )
+               newMoves.append(newMove)
+               frontier.push( (newState, newMoves, newCost) )
   
-  print("No solution found")             
+  print("No solution found")  
+             
   util.raiseNotDefined()
   
 def uniformCostSearch(problem):
   "Search the node of least total cost first. "
-  "*** YOUR CODE HERE ***"
-  from game import Directions
-  s = Directions.SOUTH
-  w = Directions.WEST
-  n = Directions.NORTH
-  e = Directions.EAST
   
   # Format for nodes: ( (x,y) , [path], totalCost ) - now BOTH path and cost increment!
   # goal: minimize totalCost
@@ -232,14 +194,7 @@ def uniformCostSearch(problem):
            newCost = i[2]
            newMoves = moves[:]
            if newState not in visited:
-               if newMove == "South":
-                   newMoves.append(s)
-               elif newMove == "West":
-                   newMoves.append(w)
-               elif newMove == "North":
-                   newMoves.append(n)
-               else:
-                   newMoves.append(e)
+               newMoves.append(newMove)
                frontier.push( (newState, newMoves, cost + newCost) )
   
   print("No solution found")
@@ -265,12 +220,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
       #    return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
       
   # total cost: UCS cost + heuristic 
-  
-  from game import Directions
-  s = Directions.SOUTH
-  w = Directions.WEST
-  n = Directions.NORTH
-  e = Directions.EAST
   
   # Format for nodes: ( (x,y) , [path], totalCost ) - now BOTH path and cost increment!
   # goal: minimize totalCost
@@ -308,18 +257,10 @@ def aStarSearch(problem, heuristic=nullHeuristic):
            newCost = i[2]
            newMoves = moves[:]
            if newState not in visited:
-               if newMove == "South":
-                   newMoves.append(s)
-               elif newMove == "West":
-                   newMoves.append(w)
-               elif newMove == "North":
-                   newMoves.append(n)
-               else:
-                   newMoves.append(e)
+               newMoves.append(newMove)
                frontier.push( (newState, newMoves, cost + newCost + heuristic(newState,problem)) )
   
   print("No solution found")
-  
   util.raiseNotDefined()
     
   

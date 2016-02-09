@@ -277,15 +277,23 @@ class CornersProblem(search.SearchProblem):
     self._expanded = 0 # Number of search nodes expanded
     
     "*** YOUR CODE HERE ***"
-    
+    self.visited = []
+    self.costFn = lambda x: 1
+
   def getStartState(self):
     "Returns the start state (in your state space, not the full Pacman state space)"
     "*** YOUR CODE HERE ***"
+    cornersVisited = set()
+    return (self.startingPosition,cornersVisited)
     util.raiseNotDefined()
     
   def isGoalState(self, state):
     "Returns whether this search state is a goal state of the problem"
     "*** YOUR CODE HERE ***"
+    if state[0] in self.corners:
+        state[1].add(state[0])
+        return len(state[1]) == 4
+    return False
     util.raiseNotDefined()
        
   def getSuccessors(self, state):
@@ -299,18 +307,22 @@ class CornersProblem(search.SearchProblem):
      required to get there, and 'stepCost' is the incremental 
      cost of expanding to that successor
     """
-    
+
     successors = []
     for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
       # Add a successor state to the successor list if the action is legal
       # Here's a code snippet for figuring out whether a new position hits a wall:
-      #   x,y = currentPosition
-      #   dx, dy = Actions.directionToVector(action)
-      #   nextx, nexty = int(x + dx), int(y + dy)
-      #   hitsWall = self.walls[nextx][nexty]
-      
-      "*** YOUR CODE HERE ***"
-      
+        x,y = state[0]
+        dx, dy = Actions.directionToVector(action)
+        nextx, nexty = int(x + dx), int(y + dy)
+        hitsWall = self.walls[nextx][nexty]
+        if not hitsWall:
+            nextState = (nextx, nexty)
+            if nextState in self.corners:
+                cornersVisited = set(state[1])
+                cornersVisited.add( nextState )
+            successors.append( ( (nextState, state[1]) , action, 1) )
+ 
     self._expanded += 1
     return successors
 
