@@ -460,9 +460,23 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount'] = problem.walls.count()
   Subsequent calls to this heuristic can access problem.heuristicInfo['wallCount']
   """
+  
+  # priority - move towards the MOST remaining food 
+  
   position, foodGrid = state
-  "*** YOUR CODE HERE ***"
-  return 0
+  foodList = foodGrid.asList()
+  walls = problem.walls
+  
+  if len(foodList) == 0:
+      return 0
+  output = 0
+  for i in foodList: 
+      xy1 = state[0]
+      xy2 = i
+      distance = abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
+      output += distance
+      
+  return output*len(foodList) # Default to trivial solution
   
 class ClosestDotSearchAgent(SearchAgent):
   "Search for all food using a sequence of searches"
