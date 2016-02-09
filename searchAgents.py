@@ -462,22 +462,40 @@ def foodHeuristic(state, problem):
   """
   
   # priority - move towards the MOST remaining food 
+  # make sure to UNDERESTIMATE DISTANCES to be optimistic (and ensure optimal solution)
+  # one way is to get the distance to the FARTHEST food
   
   position, foodGrid = state
   foodList = foodGrid.asList()
   walls = problem.walls
-  
+
   if len(foodList) == 0:
       return 0
   output = 0
-  for i in foodList: 
+  for i in foodList:
       xy1 = state[0]
       xy2 = i
       distance = abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
-      output += distance
-      
-  return output*len(foodList) # Default to trivial solution
+      output = max(output, distance)
+      # output += distance
+  if not len(foodList)==0:
+      return output # return distance to farthest food (admissible)
+  else:
+      return 0 # return 0 at goal state
   
+  
+  # position, foodGrid = state
+  # foodList = list(foodGrid.asList())
+  # gs = problem.startingGameState
+  #
+  # if not problem.heuristicInfo.get('foodDistanceGrid', False):
+  #     problem.heuristicInfo['foodDistanceGrid'] = {}
+  #
+  # foodDistanceGrid = problem.heuristicInfo['foodDistanceGrid']
+  # totalDistance = 0
+  # if len(foodList) > 0:
+  #     return totalDistance
+  #
 class ClosestDotSearchAgent(SearchAgent):
   "Search for all food using a sequence of searches"
   def registerInitialState(self, state):

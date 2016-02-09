@@ -108,13 +108,12 @@ def depthFirstSearch(problem):
        for i in options:
            newState = i[0]
            newMove = i[1] 
-           newCost = i[2]
            newMoves = moves[:]
            if newState not in visited:
                newMoves.append(newMove)
-               frontier.push( (newState, newMoves, newCost) )
+               frontier.push( (newState, newMoves, 0) )
     
-  print("No solution found")             
+  print "No solution found"              
   util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
@@ -145,13 +144,12 @@ def breadthFirstSearch(problem):
        for i in options:
            newState = i[0]
            newMove = i[1] 
-           newCost = i[2]
            newMoves = moves[:]
            if newState not in visited:
                newMoves.append(newMove)
-               frontier.push( (newState, newMoves, newCost) )
+               frontier.push( (newState, newMoves, 0) )
   
-  print("No solution found")  
+  print "No solution found"  
              
   util.raiseNotDefined()
   
@@ -197,7 +195,7 @@ def uniformCostSearch(problem):
                newMoves.append(newMove)
                frontier.push( (newState, newMoves, cost + newCost) )
   
-  print("No solution found")
+  print "No solution found" 
   util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
@@ -238,7 +236,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
   if problem.isGoalState(startState): # no moves needed if start at goal
       return moves
       
-  frontier.push( (startState, moves, heuristic(startState,problem) ) ) # push starting state with a TOTAL COST OF 0
+  frontier.push( (startState, moves, heuristic(startState,problem) ) ) # push starting state with a TOTAL COST OF 0 + heuristic 
 
   while(not frontier.isEmpty()):
        current = frontier.pop() # gets you the node with the lowest TOTAL COST (weighting factor)
@@ -260,7 +258,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                newMoves.append(newMove)
                frontier.push( (newState, newMoves, cost + newCost + heuristic(newState,problem)) )
   
-  print("No solution found")
+  print "No solution found" 
   util.raiseNotDefined()
     
   
