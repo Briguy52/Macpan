@@ -369,9 +369,10 @@ def cornersHeuristic(state, problem):
       xy1 = state[0]
       xy2 = i
       distance = abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
-      output += distance
+      # output += distance
+      output = max(output, distance)
       
-  return output*len(toVisit) # Default to trivial solution
+  return output # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):
   "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -477,25 +478,9 @@ def foodHeuristic(state, problem):
       xy2 = i
       distance = abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
       output = max(output, distance)
-      # output += distance
-  if not len(foodList)==0:
-      return output # return distance to farthest food (admissible)
-  else:
-      return 0 # return 0 at goal state
   
+  return output
   
-  # position, foodGrid = state
-  # foodList = list(foodGrid.asList())
-  # gs = problem.startingGameState
-  #
-  # if not problem.heuristicInfo.get('foodDistanceGrid', False):
-  #     problem.heuristicInfo['foodDistanceGrid'] = {}
-  #
-  # foodDistanceGrid = problem.heuristicInfo['foodDistanceGrid']
-  # totalDistance = 0
-  # if len(foodList) > 0:
-  #     return totalDistance
-  #
 class ClosestDotSearchAgent(SearchAgent):
   "Search for all food using a sequence of searches"
   def registerInitialState(self, state):
