@@ -493,17 +493,34 @@ def foodHeuristic(state, problem):
   position, foodGrid = state
   foodList = foodGrid.asList()
   walls = problem.walls
-
+  player = state[0] 
+    
   if len(foodList) == 0:
       return 0
-  output = 0
-  for i in foodList:
-      xy1 = state[0]
-      xy2 = i
-      distance = abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
-      output = max(output, distance)
+      
+  def distanceFromPlayer( input ):
+      return util.manhattanDistance(player,input)
   
-  return output + (len(foodList) -1) # at least distance of 1 b/w remaining food
+  frontier = util.PriorityQueueWithFunction(distanceFromPlayer)
+  toVisit = foodList
+  
+  for i in toVisit:
+      frontier.push(i)
+      
+  current = frontier.pop()
+  output = util.manhattanDistance(player,current)
+  toVisit.remove(current) 
+  
+  while toVisit:
+      newPQ = util.PriorityQueue()
+      for i in toVisit:
+          newPQ.push(i,util.manhattanDistance(current,i))
+      follower = newPQ.pop()
+      output += util.manhattanDistance(current,follower)
+      current = follower
+      toVisit.remove(follower) 
+
+  return output # at least distance of 1 b/w remaining food
   
 class ClosestDotSearchAgent(SearchAgent):
   "Search for all food using a sequence of searches"
