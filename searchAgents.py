@@ -372,26 +372,22 @@ def cornersHeuristic(state, problem):
   if len(toVisit) == 0:
       return 0
   
+  if len(toVisit) == 1:
+      return util.manhattanDistance(player, toVisit.pop())
+  
   # find manhattan distance from closest to farthest corner 
-  farCorner = ()
-  maxDist = 0
-  closeCorner = ()
+  maxSeparation = 0
+  corner1 = ()
+  corner2 = ()
   minDist = 999999
   for i in toVisit:
-      if util.manhattanDistance(player,i) < minDist:
-          minDist = util.manhattanDistance(player,i)
-          closeCorner = i
-
-  if len(toVisit) == 1:
-      return minDist
+      for j in toVisit:
+          if util.manhattanDistance(i,j) > maxSeparation:
+              maxSeparation = util.manhattanDistance(i,j)
+              corner1 = i
+              corner2 = j
   
-  # now find the corner that's farthest from the closest one
-  for i in toVisit:
-      if util.manhattanDistance(closeCorner,i) > maxDist:
-          maxDist = util.manhattanDistance(closeCorner,i)
-          farCorner = i 
-      
-  maxSeparation = util.manhattanDistance(farCorner, closeCorner)
+  minDist = min(util.manhattanDistance(player,corner1),util.manhattanDistance(player,corner2));  
   return minDist + maxSeparation  # if you have > 1 corner left, add in travel estimate to remaining
 
 class AStarCornersAgent(SearchAgent):
