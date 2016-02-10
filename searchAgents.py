@@ -378,15 +378,18 @@ def cornersHeuristic(state, problem):
   closeCorner = ()
   minDist = 999999
   for i in toVisit:
-      if util.manhattanDistance(player,i) > maxDist:
-          maxDist = util.manhattanDistance(player,i)
-          farCorner = i
       if util.manhattanDistance(player,i) < minDist:
           minDist = util.manhattanDistance(player,i)
           closeCorner = i
 
   if len(toVisit) == 1:
       return minDist
+  
+  # now find the corner that's farthest from the closest one
+  for i in toVisit:
+      if util.manhattanDistance(closeCorner,i) > maxDist:
+          maxDist = util.manhattanDistance(closeCorner,i)
+          farCorner = i 
       
   maxSeparation = util.manhattanDistance(farCorner, closeCorner)
   return minDist + maxSeparation  # if you have > 1 corner left, add in travel estimate to remaining
@@ -495,7 +498,7 @@ def foodHeuristic(state, problem):
   for i in foodList:
       maximum = max(maximum, util.manhattanDistance(player, i))
 
-  return maximum + len(foodList) - 1 # each remaining food is at least 1 unit apart from each other 
+  return maximum  # each remaining food is at least 1 unit apart from each other 
   
 class ClosestDotSearchAgent(SearchAgent):
   "Search for all food using a sequence of searches"
