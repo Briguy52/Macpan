@@ -175,7 +175,7 @@ def uniformCostSearch(problem):
       
   frontier.push( (startState, moves, 0) ) # push starting state with a TOTAL COST OF 0
 
-  while(not frontier.isEmpty()):
+  while not frontier.isEmpty():
        current = frontier.pop() # gets you the node with the lowest TOTAL COST (weighting factor)
        state = current[0] # grab the COORDINATE we're on right now
        moves = current[1] # grab the current list of MOVES taken to get to this spot

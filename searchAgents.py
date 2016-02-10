@@ -357,22 +357,46 @@ def cornersHeuristic(state, problem):
   # highest priority -> closest unvisited corner
   # use manhattan for distance calculations
   # return 0 at goal states
-
+  
+  # find distance to closest remaining corner
+  # then, add distances from that corner to the next corner (should be straight line)
+  # rinse and repeat
+  
+  player = state[0] 
   visited = state[1]
   toVisit = list(corners)
+  
   for i in visited:
       toVisit.remove(i)
+      
   if len(toVisit) == 0:
       return 0
-  output = 0
-  for i in toVisit: 
-      xy1 = state[0]
-      xy2 = i
-      distance = abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
-      # output += distance
-      output = max(output, distance)
+  
+  # create a Priority Queue of corners based on distane to player
+  # first, find closest corner + distance to it
+  
+  def distanceFromPlayer( input ):
+      return util.manhattanDistance(player,input)
+  
+  frontier = util.PriorityQueueWithFunction(distanceFromPlayer)
+  
+  for i in toVisit:
+      frontier.push(i)
       
-  return output # Default to trivial solution
+  current = frontier.pop()
+  output = util.manhattanDistance(player,current)
+  toVisit.remove(current) 
+  
+  while toVisit:
+      newPQ = util.PriorityQueue()
+      for i in toVisit:
+          newPQ.push(i,util.manhattanDistance(current,i))
+      follower = newPQ.pop()
+      output += util.manhattanDistance(current,follower)
+      current = follower
+      toVisit.remove(follower) 
+
+  return output  # if you have > 1 corner left, add in travel estimate to remaining
 
 class AStarCornersAgent(SearchAgent):
   "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -479,7 +503,7 @@ def foodHeuristic(state, problem):
       distance = abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
       output = max(output, distance)
   
-  return output
+  return output + (len(foodList) -1) # at least distance of 1 b/w remaining food
   
 class ClosestDotSearchAgent(SearchAgent):
   "Search for all food using a sequence of searches"
