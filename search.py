@@ -86,7 +86,7 @@ def depthFirstSearch(problem):
   """
 
   visited = [] # a list of tuples I have been to (x,y)
-  frontier = util.Stack() # a stack of tuples to visit ( (x,y), [s,w,n,e], 1 )
+  frontier = util.Stack() # a stack of tuples to visit ( (x,y), [s,w,n,e], cost )
   
   startState = problem.getStartState() # starting coords
   

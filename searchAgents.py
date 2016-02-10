@@ -372,31 +372,24 @@ def cornersHeuristic(state, problem):
   if len(toVisit) == 0:
       return 0
   
-  # create a Priority Queue of corners based on distane to player
-  # first, find closest corner + distance to it
-  
-  def distanceFromPlayer( input ):
-      return util.manhattanDistance(player,input)
-  
-  frontier = util.PriorityQueueWithFunction(distanceFromPlayer)
-  
+  # find manhattan distance from closest to farthest corner 
+  farCorner = ()
+  maxDist = 0
+  closeCorner = ()
+  minDist = 999999
   for i in toVisit:
-      frontier.push(i)
-      
-  current = frontier.pop()
-  output = util.manhattanDistance(player,current)
-  toVisit.remove(current) 
-  
-  while toVisit:
-      newPQ = util.PriorityQueue()
-      for i in toVisit:
-          newPQ.push(i,util.manhattanDistance(current,i))
-      follower = newPQ.pop()
-      output += util.manhattanDistance(current,follower)
-      current = follower
-      toVisit.remove(follower) 
+      if util.manhattanDistance(player,i) > maxDist:
+          maxDist = util.manhattanDistance(player,i)
+          farCorner = i
+      if util.manhattanDistance(player,i) < minDist:
+          minDist = util.manhattanDistance(player,i)
+          closeCorner = i
 
-  return output  # if you have > 1 corner left, add in travel estimate to remaining
+  if len(toVisit) == 1:
+      return minDist
+      
+  maxSeparation = util.manhattanDistance(farCorner, closeCorner)
+  return minDist + maxSeparation  # if you have > 1 corner left, add in travel estimate to remaining
 
 class AStarCornersAgent(SearchAgent):
   "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -497,28 +490,12 @@ def foodHeuristic(state, problem):
     
   if len(foodList) == 0:
       return 0
-
-  if len(foodList) == 1:
-      return util.manhattanDistance(player,foodList.pop())
-      
-  maxSeparation = 0
-  minDistToPlayer = 9999999
-  maxOne = 0
-  maxTwo = 0
+  
+  maximum = 0
   for i in foodList:
-      for j in foodList:
-          if util.manhattanDistance(i,j) > maxSeparation:
-              maxSeparation = util.manhattanDistance(i,j)
-              maxOne = i
-              maxTwo = j
-              minDistToPlayer = min(util.manhattanDistance(player,maxOne), util.manhattanDistance(player,maxTwo))
-          elif util.manhattanDistance(i,j) == maxSeparation:
-              if min(util.manhattanDistance(player,i),util.manhattanDistance(player,j)) <  minDistToPlayer:
-                  maxOne = i
-                  maxTwo = j
-                  minDistToPlayer = min(util.manhattanDistance(player,maxOne), util.manhattanDistance(player,maxTwo))
+      maximum = max(maximum, util.manhattanDistance(player, i))
 
-  return maxSeparation + minDistToPlayer
+  return maximum + len(foodList) - 1 # each remaining food is at least 1 unit apart from each other 
   
 class ClosestDotSearchAgent(SearchAgent):
   "Search for all food using a sequence of searches"
