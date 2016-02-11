@@ -21,8 +21,6 @@ project description.
 Please only change the parts of the file you are asked to.
 Look for the lines that say
 
-"*** YOUR CODE HERE ***"
-
 The parts you fill in start about 3/4 of the way down.  Follow the
 project description for details.
 
@@ -280,14 +278,12 @@ class CornersProblem(search.SearchProblem):
 
   def getStartState(self):
     "Returns the start state (in your state space, not the full Pacman state space)"
-    "*** YOUR CODE HERE ***"
     cornersVisited = set()
     return (self.startingPosition,cornersVisited)
     util.raiseNotDefined()
     
   def isGoalState(self, state):
     "Returns whether this search state is a goal state of the problem"
-    "*** YOUR CODE HERE ***"
     if state[0] in self.corners:
         state[1].add(state[0])
         return len(state[1]) == 4

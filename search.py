@@ -99,19 +99,16 @@ def depthFirstSearch(problem):
        current = frontier.pop() 
        state = current[0] # grab the COORDINATE we're on right now
        moves = current[1] # grab the current list of MOVES taken to get to this spot
-       if problem.isGoalState(state): 
-           return moves
+       if problem.isGoalState(current[0]): 
+           return current[1]
        if state in visited:  # DON'T go to a coord you've already visited
            continue
        visited.append(state)
-       options = problem.getSuccessors(state) # options is a list of choices
-       for i in options:
-           newState = i[0]
-           newMove = i[1] 
-           newMoves = moves[:]
-           if newState not in visited:
-               newMoves.append(newMove)
-               frontier.push( (newState, newMoves, 0) )
+       for i in problem.getSuccessors(state):
+           newMoves = current[1][:]
+           if i[0] not in visited:
+               newMoves.append(i[1])
+               frontier.push( (i[0], newMoves, 0) )
     
   print "No solution found"              
   util.raiseNotDefined()
@@ -140,14 +137,11 @@ def breadthFirstSearch(problem):
        if state in visited:  # DON'T go to a coord you've already visited
            continue
        visited.append(state)
-       options = problem.getSuccessors(state) # options is a list of choices
-       for i in options:
-           newState = i[0]
-           newMove = i[1] 
+       for i in problem.getSuccessors(state):
            newMoves = moves[:]
-           if newState not in visited:
-               newMoves.append(newMove)
-               frontier.push( (newState, newMoves, 0) )
+           if i[0] not in visited:
+               newMoves.append(i[1])
+               frontier.push( (i[0], newMoves, 0) )
   
   print "No solution found"  
              
@@ -185,8 +179,7 @@ def uniformCostSearch(problem):
        if state in visited:  # DON'T go to a coord you've already visited
            continue
        visited.append(state)
-       options = problem.getSuccessors(state) # options is a list of choices
-       for i in options:
+       for i in problem.getSuccessors(state):
            newState = i[0]
            newMove = i[1] 
            newCost = i[2]
@@ -210,12 +203,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
   
   # 'lowest combined cost' --> use UCS algo
   # 'lowest heuristic' 
-      # def manhattanHeuristic(position, problem, info={}):
-      #    "The Manhattan distance heuristic for a PositionSearchProblem"
-      #    xy1 = position
-      #    xy2 = problem.goal
-      #    return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
-      
   # total cost: UCS cost + heuristic 
   
   # Format for nodes: ( (x,y) , [path], totalCost ) - now BOTH path and cost increment!
@@ -247,8 +234,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
        if state in visited:  # DON'T go to a coord you've already visited
            continue
        visited.append(state)
-       options = problem.getSuccessors(state) # options is a list of choices
-       for i in options:
+       for i in problem.getSuccessors(state):
            newState = i[0]
            newMove = i[1] 
            newCost = i[2]
