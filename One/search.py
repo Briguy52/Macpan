@@ -88,17 +88,17 @@ def depthFirstSearch(problem):
   visited = [] # a list of tuples I have been to (x,y)
   frontier = util.Stack() # a stack of tuples to visit ( (x,y), [s,w,n,e], cost )
   
-  startState = problem.getStartState() # starting coords
+  current = problem.getStartState() # starting coords
   
-  if problem.isGoalState(startState): # no moves needed if start at goal
+  if problem.isGoalState(current): # no moves needed if start at goal
       return moves
       
-  frontier.push( (startState,[],0) )
+  frontier.push( (current,[],0) )
 
-  while(not frontier.isEmpty()):
-       current = frontier.pop() 
+  while True:
+       current = frontier.pop()
        state = current[0] # grab the COORDINATE we're on right now
-       moves = current[1] # grab the current list of MOVES taken to get to this spot
+       moves = current[1] # grab the current list of MOVES taken to get to this spo
        if problem.isGoalState(current[0]): 
            return current[1]
        if state in visited:  # DON'T go to a coord you've already visited
@@ -109,6 +109,9 @@ def depthFirstSearch(problem):
            if i[0] not in visited:
                newMoves.append(i[1])
                frontier.push( (i[0], newMoves, 0) )
+       if (frontier.isEmpty()):
+           break
+
     
   print "No solution found"              
   util.raiseNotDefined()
@@ -121,14 +124,14 @@ def breadthFirstSearch(problem):
   visited = [] # a list of tuples I have been to (x,y)
   frontier = util.Queue() # a stack of tuples to visit ( (x,y), [s,w,n,e], 1 )
   
-  startState = problem.getStartState() # starting coords
+  current = problem.getStartState() # starting coords
   
-  if problem.isGoalState(startState): # no moves needed if start at goal
+  if problem.isGoalState(current): # no moves needed if start at goal
       return moves
       
-  frontier.push( (startState,[],0) )
+  frontier.push( (current,[],0) )
 
-  while(not frontier.isEmpty()):
+  while True:
        current = frontier.pop() 
        state = current[0] # grab the COORDINATE we're on right now
        moves = current[1] # grab the current list of MOVES taken to get to this spot
@@ -142,6 +145,8 @@ def breadthFirstSearch(problem):
            if i[0] not in visited:
                newMoves.append(i[1])
                frontier.push( (i[0], newMoves, 0) )
+       if (frontier.isEmpty()):
+           break
   
   print "No solution found"  
              
@@ -162,14 +167,14 @@ def uniformCostSearch(problem):
   frontier = util.PriorityQueueWithFunction(getTotalCost) # a PQ list of neighboring states (make sure to CHECK FOR VISITED!) - PQ gets you the lowest with pop()
   moves = []
   
-  startState = problem.getStartState() # starting coords
+  current = problem.getStartState() # starting coords
   
-  if problem.isGoalState(startState): # no moves needed if start at goal
+  if problem.isGoalState(current): # no moves needed if start at goal
       return moves
       
-  frontier.push( (startState, moves, 0) ) # push starting state with a TOTAL COST OF 0
+  frontier.push( (current, moves, 0) ) # push starting state with a TOTAL COST OF 0
 
-  while not frontier.isEmpty():
+  while True:
        current = frontier.pop() # gets you the node with the lowest TOTAL COST (weighting factor)
        state = current[0] # grab the COORDINATE we're on right now
        moves = current[1] # grab the current list of MOVES taken to get to this spot
@@ -187,6 +192,8 @@ def uniformCostSearch(problem):
            if newState not in visited:
                newMoves.append(newMove)
                frontier.push( (newState, newMoves, cost + newCost) )
+       if (frontier.isEmpty()):
+           break
   
   print "No solution found" 
   util.raiseNotDefined()
@@ -217,14 +224,14 @@ def aStarSearch(problem, heuristic=nullHeuristic):
   frontier = util.PriorityQueueWithFunction(getTotalCost) # a PQ list of neighboring states (make sure to CHECK FOR VISITED!) - PQ gets you the lowest with pop()
   moves = []
   
-  startState = problem.getStartState() # starting coords
+  current = problem.getStartState() # starting coords
   
-  if problem.isGoalState(startState): # no moves needed if start at goal
+  if problem.isGoalState(current): # no moves needed if start at goal
       return moves
       
-  frontier.push( (startState, moves, heuristic(startState,problem) ) ) # push starting state with a TOTAL COST OF 0 + heuristic 
+  frontier.push( (current, moves, heuristic(current,problem) ) ) # push starting state with a TOTAL COST OF 0 + heuristic 
 
-  while(not frontier.isEmpty()):
+  while(True):
        current = frontier.pop() # gets you the node with the lowest TOTAL COST (weighting factor)
        state = current[0] # grab the COORDINATE we're on right now
        moves = current[1] # grab the current list of MOVES taken to get to this spot
@@ -242,6 +249,8 @@ def aStarSearch(problem, heuristic=nullHeuristic):
            if newState not in visited:
                newMoves.append(newMove)
                frontier.push( (newState, newMoves, cost + newCost + heuristic(newState,problem)) )
+       if (frontier.isEmpty()):
+           break
   
   print "No solution found" 
   util.raiseNotDefined()
