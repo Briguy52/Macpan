@@ -70,9 +70,7 @@ class ReflexAgent(Agent):
     "*** YOUR CODE HERE ***"
     
     # Add some more useful info from pacman.py's GameState
-    newGhostPositions = successorGameState.getGhostPositions
     newScore = successorGameState.getScore()
-    numFood = successorGameState.getNumFood() 
     # also have access to isWin() and isLose() for base cases
     
     if successorGameState.isWin():
