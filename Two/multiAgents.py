@@ -80,15 +80,12 @@ class ReflexAgent(Agent):
     if successorGameState.isLose():
         return -9999999
     
-    # print successorGameState
-    # print newPos
-    # print newFood
-    # print newGhostStates
-    # print newScaredTimes
-    # print newGhostStates[0]
-    # print type(newGhostStates[0])
+    distanceFromGhosts = 0
+    for i in newGhostStates:
+        distanceFromGhosts += util.manhattanDistance(i.getPosition(),newPos)
     
-    return newScore
+    return 1 / distanceFromGhosts + newScore
+    # return newScore
 
 def scoreEvaluationFunction(currentGameState):
   """
