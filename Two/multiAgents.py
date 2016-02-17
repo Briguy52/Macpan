@@ -64,11 +64,31 @@ class ReflexAgent(Agent):
     successorGameState = currentGameState.generatePacmanSuccessor(action)
     newPos = successorGameState.getPacmanPosition()
     newFood = successorGameState.getFood()
-    newGhostStates = successorGameState.getGhostStates()
+    newGhostStates = successorGameState.getGhostStates() # has len 1
     newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
     "*** YOUR CODE HERE ***"
-    return successorGameState.getScore()
+    
+    # Add some more useful info from pacman.py's GameState
+    newGhostPositions = successorGameState.getGhostPositions
+    newScore = successorGameState.getScore()
+    numFood = successorGameState.getNumFood() 
+    # also have access to isWin() and isLose() for base cases
+    
+    if successorGameState.isWin():
+        return 99999999
+    if successorGameState.isLose():
+        return -9999999
+    
+    # print successorGameState
+    # print newPos
+    # print newFood
+    # print newGhostStates
+    # print newScaredTimes
+    # print newGhostStates[0]
+    # print type(newGhostStates[0])
+    
+    return newScore
 
 def scoreEvaluationFunction(currentGameState):
   """
