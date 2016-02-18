@@ -144,37 +144,35 @@ class MinimaxAgent(MultiAgentSearchAgent):
     """
     numAgents = gameState.getNumAgents()
     ghostsRemaining = numAgents - 1 
-     
-    maxScore = -999999999
-    moves = gameState.getLegalActions(0) # get moves for Pacman
-    bestMove = moves[0]
-    for move in moves:
-        successor = gameState.generateSuccessor(0,move)
-        score = getMin(successor, self.depth, 0) # Pacman goes first
-        if score > maxScore:
-            bestMove = move
-            maxScore = score
-    return bestMove
-
+    totalGhosts = ghostsRemaining
+    
     # now it's the ghosts' turn
-    def getMin(state, depth, agentIndex, ghostsRemaining):
+    def getMin(state, depth, agentIndex, ghostsRemaining, totalGhosts):
         if depth == 0 or state.isWin() or state.isLose():
             return self.evaluationFunction(gameState)
         moves = state.getLegalActions(agentIndex)
         minScore = 9999999999
-        for move in moves:
-            successor = gameState.generateSuccessor(agentIndex,move)
-            score = getMax(successor, depth-1, agentIndex, ghostsRemaining-1) #TODO: agents
-            if score < minScore:
-                bestMove = move
-                minScore = score
-            return minScore
+        if ghostsRemaining == 0: # out of ghosts, go back to Pacman
+            for move in moves:
+                successor = gameState.generateSuccessor(agentIndex,move)
+                score = getMax(successor, depth-1, 0, totalGhosts, totalGhosts) #TODO: agents
+                if score < minScore:
+                    bestMove = move
+                    minScore = score
+        else: # still more ghosts
+            for move in moves:
+                successor = gameState.generateSuccessor(agentIndex,move)
+                score = getMax(successor, depth, agentIndex+1, ghostsRemaining-1, totalGhosts) #TODO: agents
+                if score < minScore:
+                    bestMove = move
+                    minScore = score
+        return minScore
             
     # back to Pacman's turn        
-    def getMax(state, depth, agentIndex, ghostsRemaining):
+    def getMax(state, depth, agentIndex, ghostsRemaining, totalGhosts):
         if depth == 0 or state.isWin() or state.isLose():
             return self.evaluationFunction(gameState)
-        moves = state.getLegalActions(agentIndex)
+        moves = state.getLegalActions(0) # always Pacman
         maxScore = -999999999
         for move in moves:
             successor = gameState.generateSuccessor(agentIndex,move)
@@ -182,8 +180,20 @@ class MinimaxAgent(MultiAgentSearchAgent):
             if score > maxScore:
                 bestMove = move
                 minScore = score
-            return maxScore
-            
+        return maxScore
+    
+     
+    maxScore = -999999999
+    moves = gameState.getLegalActions(0) # get moves for Pacman
+    bestMove = Directions.STOP # always valid
+    for move in moves:
+        successor = gameState.generateSuccessor(0,move)
+        score = getMax(successor, self.depth, 1, ghostsRemaining, totalGhosts) # Pacman goes first
+        if score > maxScore:
+            bestMove = move
+            maxScore = score
+    return bestMove
+
     util.raiseNotDefined()
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
