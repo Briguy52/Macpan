@@ -143,7 +143,19 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns the total number of agents in the game
     """
     
+    numAgents = gameState.getNumAgents() 
     
+    # TODO: check 
+    if self.depth == 0:
+        return self.evaluationFunction(gameState, Directions.STOP)
+    
+    if agentIndex == 0: # is Pacman
+        bestScore = -999999999
+        moves = gameState.getLegalActions(0) # get moves for Pacman
+        bestMove = moves[0]
+        for move in moves:
+            clone = gameState.generateSuccessor(0,move)
+            score = 
     
     
     util.raiseNotDefined()
