@@ -66,8 +66,6 @@ class ReflexAgent(Agent):
     newFood = successorGameState.getFood()
     newGhostStates = successorGameState.getGhostStates() # has len 1
     newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
-
-    "*** YOUR CODE HERE ***"
     
     # Add some more useful info from pacman.py's GameState
     newScore = successorGameState.getScore()
@@ -144,7 +142,10 @@ class MinimaxAgent(MultiAgentSearchAgent):
       gameState.getNumAgents():
         Returns the total number of agents in the game
     """
-    "*** YOUR CODE HERE ***"
+    
+    
+    
+    
     util.raiseNotDefined()
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
