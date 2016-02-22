@@ -66,26 +66,24 @@ class ReflexAgent(Agent):
     newFood = successorGameState.getFood()
     newGhostStates = successorGameState.getGhostStates() # has len 1
     newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
-    
+
     # Add some more useful info from pacman.py's GameState
     newScore = successorGameState.getScore()
-    # also have access to isWin() and isLose() for base cases
-    
+
     if successorGameState.isWin():
         return 99999999
     if successorGameState.isLose():
         return -9999999
-    
+
     distanceFromGhosts = 0
     for i in newGhostStates:
         distanceFromGhosts += util.manhattanDistance(i.getPosition(),newPos)
-    
-    distanceFromFood = 0 
-    for i in newFood.asList(): 
+
+    distanceFromFood = 1
+    for i in newFood.asList():
         distanceFromFood += util.manhattanDistance(i,newPos)
-    
+
     return distanceFromGhosts + newScore + 1/distanceFromFood
-    # return newScore
 
 def scoreEvaluationFunction(currentGameState):
   """
@@ -143,57 +141,55 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns the total number of agents in the game
     """
     numAgents = gameState.getNumAgents()
-    ghostsRemaining = numAgents - 1 
-    totalGhosts = ghostsRemaining
-    
-    # now it's the ghosts' turn
-    def getMin(state, depth, agentIndex, ghostsRemaining, totalGhosts):
-        if depth == 0 or state.isWin() or state.isLose():
-            return self.evaluationFunction(gameState)
-        moves = state.getLegalActions(agentIndex)
-        if ghostsRemaining == 0: # out of ghosts, go back to Pacman
-            outScore = -9999999999
-            for move in moves:
-                successor = gameState.generateSuccessor(agentIndex,move)
-                score = getMax(successor, depth-1, 0, totalGhosts) #TODO: agents
-                if score > outScore:
-                    bestMove = move
-                    outScore = score
-        else: # still more ghosts
-            outScore = 9999999999
-            for move in moves:
-                successor = gameState.generateSuccessor(agentIndex,move)
-                score = getMin(successor, depth, agentIndex+1, ghostsRemaining-1, totalGhosts) #TODO: agents
-                if score < outScore:
-                    bestMove = move
-                    outScore = score
-        return outScore
-            
-    # back to Pacman's turn        
-    def getMax(state, depth, agentIndex, totalGhosts):
-        if depth == 0 or state.isWin() or state.isLose():
-            return self.evaluationFunction(gameState)
-        moves = state.getLegalActions(0) # always Pacman
-        maxScore = -999999999
-        for move in moves:
-            successor = gameState.generateSuccessor(agentIndex,move)
-            score = getMin(successor, depth-1, 1, totalGhosts-1, totalGhosts) #TODO: call ghost's turn
-            if score > maxScore:
-                bestMove = move
-                minScore = score
-        return maxScore
-    
-     
-    maxScore = -999999999
-    moves = gameState.getLegalActions(0) # get moves for Pacman
+    totalGhosts = numAgents - 1
+
+    moves = gameState.getLegalActions(0) # get moves to choose from
+
     bestMove = Directions.STOP # always valid
-    # bestMove = moves[0]
+    bestScore = -99999999999
+
+    def minimax(state, depth, agentIndex, totalGhosts):
+        # evaluate if at a leaf
+        if depth == 0 or state.isWin() or state.isLose():
+            return self.evaluationFunction(state)
+
+        moves = state.getLegalActions(agentIndex) # get moves to choose from
+        bestMove = Directions.STOP # always valid
+
+        # set values depending on if Pacman or ghost turn
+        if agentIndex == 0:
+            bestScore = -99999999999 # Pacman wants to MAX score
+            for move in moves:
+                successor = state.generateSuccessor(agentIndex,move)
+                score = minimax(successor, depth, 1, totalGhosts)
+                if score > bestScore:
+                    bestMove = move
+                    bestScore = score
+        elif agentIndex > 0 and agentIndex < totalGhosts:
+            bestScore = 999999999999 # Ghosts want to MIN score
+            for move in moves:
+                successor = state.generateSuccessor(agentIndex,move)
+                score = minimax(successor, depth, agentIndex+1, totalGhosts)
+                if score < bestScore:
+                    bestMove = move
+                    bestScore = score
+        elif agentIndex == totalGhosts:
+            bestScore = -99999999999 # Pacman wants to MAX score
+            for move in moves:
+                successor = state.generateSuccessor(agentIndex,move)
+                score = minimax(successor, depth-1, 0, totalGhosts)
+                if score > bestScore:
+                    bestMove = move
+                    bestScore = score
+        return bestScore
+
+
     for move in moves:
-        successor = gameState.generateSuccessor(0,move)
-        score = getMax(successor, self.depth, 0, totalGhosts) # Pacman goes first
-        if score > maxScore:
+        successor = gameState.generateSuccessor(0,bestMove) # Pacman goes first
+        score = minimax(successor, self.depth, 1, totalGhosts)
+        if score > bestScore:
             bestMove = move
-            maxScore = score
+            bestScore = score
     return bestMove
 
     util.raiseNotDefined()
@@ -253,4 +249,3 @@ class ContestAgent(MultiAgentSearchAgent):
     """
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
-
