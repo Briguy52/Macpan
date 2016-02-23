@@ -156,25 +156,19 @@ class MinimaxAgent(MultiAgentSearchAgent):
             for move in moves:
                 successor = state.generateSuccessor(agentIndex,move)
                 score = minimax(successor, depth, 1)
-                if score > bestScore:
-                    bestMove = move
-                    bestScore = score
+                bestScore = max(score, bestScore)
         elif agentIndex > 0 and agentIndex < totalGhosts:
             bestScore = 999999999999 # Ghosts want to MIN score
             for move in moves:
                 successor = state.generateSuccessor(agentIndex,move)
                 score = minimax(successor, depth, agentIndex+1)
-                if score < bestScore:
-                    bestMove = move
-                    bestScore = score
+                bestScore = min(score, bestScore)
         elif agentIndex == totalGhosts:
             bestScore = -99999999999 # Pacman wants to MAX score
             for move in moves:
                 successor = state.generateSuccessor(agentIndex,move)
                 score = minimax(successor, depth-1, 0)
-                if score > bestScore:
-                    bestMove = move
-                    bestScore = score
+                bestScore = max(score, bestScore)
         return bestScore
 
     moves = gameState.getLegalActions(0) # get moves to choose from
@@ -218,48 +212,52 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             for move in moves:
                 successor = state.generateSuccessor(agentIndex,move)
                 score = alphabeta(successor, depth, alpha, beta, 1)
-                alpha = max(alpha, score)
-                if beta <= alpha:
+                bestScore = max(score, bestScore)
+                if score > beta:
+                    # break
                     return bestScore
-                elif score > bestScore:
-                    bestMove = move
-                    bestScore = score
+                alpha = max(score, alpha)
         elif agentIndex > 0 and agentIndex < totalGhosts:
             bestScore = 999999999999 # Ghosts want to MIN score
             for move in moves:
                 successor = state.generateSuccessor(agentIndex,move)
                 score = (successor, depth, alpha, beta, agentIndex+1)
-                beta = min(beta, score)
-                if beta <= alpha:
+                bestScore = min(score, bestScore)
+                if score < alpha:
+                    # break
                     return bestScore
-                elif score < bestScore:
-                    bestMove = move
-                    bestScore = score
+                beta = min(score, beta)
         elif agentIndex == totalGhosts:
             bestScore = -99999999999 # Pacman wants to MAX score
             for move in moves:
                 successor = state.generateSuccessor(agentIndex,move)
                 score = alphabeta(successor, depth-1, alpha, beta, 0)
-                beta = min(beta, score)
-                if beta <= alpha:
+                bestScore = min(score, bestScore)
+                if score < alpha:
+                    # break
                     return bestScore
-                if score > bestScore:
-                    bestMove = move
-                    bestScore = score
+                beta = min(score, beta)
         return bestScore
 
     moves = gameState.getLegalActions(0) # get moves to choose from
 
     bestMove = Directions.STOP # always valid
     bestScore = -99999999999
+    alpha = -99999999999
+    beta = 99999999999
 
     for move in moves:
         successor = gameState.generateSuccessor(0,move) # Pacman goes first
-        score = alphabeta(successor, self.depth, -99999999999, 99999999999, 1)
+        score = alphabeta(successor, self.depth, alpha, beta, 1)
         if score > bestScore:
             bestMove = move
             bestScore = score
+        if bestScore > beta:
+            # break
+            return bestMove
+        alpha = max(bestScore, alpha)
     return bestMove
+
 
     util.raiseNotDefined()
 
