@@ -200,8 +200,6 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
     def alphabeta(state, depth, alpha, beta, agentIndex):
         # evaluate if at a leaf
-        print depth
-        print agentIndex
         if depth == 0 or state.isWin() or state.isLose():
             return self.evaluationFunction(state)
 
@@ -209,7 +207,6 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         bestMove = Directions.STOP # always valid
         # set values depending on if Pacman or ghost turn
         if agentIndex == 0:
-            print "Pacman"
             bestScore = -99999999999 # Pacman wants to MAX score
             for move in moves:
                 successor = state.generateSuccessor(agentIndex,move)
@@ -220,7 +217,6 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                     # return bestScore
                 alpha = max(bestScore, alpha)
         elif agentIndex > 0 and agentIndex < totalGhosts:
-            print "Ghost 1"
             bestScore = 999999999999 # Ghosts want to MIN score
             for move in moves:
                 successor = state.generateSuccessor(agentIndex,move)
@@ -231,7 +227,6 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                     # return bestScore
                 beta = min(bestScore, beta)
         elif agentIndex == totalGhosts:
-            print "Ghost 2"
             bestScore = -99999999999 # Pacman wants to MAX score
             for move in moves:
                 successor = state.generateSuccessor(agentIndex,move)
@@ -241,8 +236,6 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                     break
                     # return bestScore
                 beta = min(bestScore, beta)
-        print bestScore
-        raw_input("Press enter to continue...")
         return bestScore
 
     moves = gameState.getLegalActions(0) # get moves to choose from
@@ -252,6 +245,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
     alpha = -99999999999
     beta = 99999999999
 
+    print moves
     for move in moves:
         successor = gameState.generateSuccessor(0,move) # Pacman goes first
         score = alphabeta(successor, self.depth, alpha, beta, 1)
@@ -259,12 +253,9 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             bestMove = move
             bestScore = score
         if bestScore > beta:
-            # break
             return bestMove
         alpha = max(bestScore, alpha)
     return bestMove
-
-
     util.raiseNotDefined()
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
