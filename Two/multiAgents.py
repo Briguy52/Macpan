@@ -195,7 +195,6 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
     """
       Returns the minimax action using self.depth and self.evaluationFunction
     """
-    "*** YOUR CODE HERE ***"
     numAgents = gameState.getNumAgents()
     totalGhosts = numAgents - 1
 
