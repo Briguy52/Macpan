@@ -236,7 +236,6 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                     break
                     # return bestScore
                 beta = min(bestScore, beta)
-        # print bestScore
         return bestScore
 
     moves = gameState.getLegalActions(0) # get moves to choose from
@@ -255,6 +254,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         if bestScore > beta:
             return bestMove
         alpha = max(bestScore, alpha)
+    print bestScore
     return bestMove
     util.raiseNotDefined()
 
