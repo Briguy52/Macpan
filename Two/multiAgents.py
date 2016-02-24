@@ -213,8 +213,8 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 score = alphabeta(successor, depth, alpha, beta, 1)
                 bestScore = max(score, bestScore)
                 if bestScore > beta:
-                    break
-                    # return bestScore
+                    # break
+                    return bestScore
                 alpha = max(bestScore, alpha)
         elif agentIndex > 0 and agentIndex < totalGhosts:
             bestScore = 999999999999 # Ghosts want to MIN score
@@ -223,19 +223,20 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 score = alphabeta(successor, depth, alpha, beta, agentIndex+1)
                 bestScore = min(score, bestScore)
                 if bestScore < alpha:
-                    break
-                    # return bestScore
+                    # break
+                    return bestScore
                 beta = min(bestScore, beta)
         elif agentIndex == totalGhosts:
-            bestScore = -99999999999 # Pacman wants to MAX score
+            bestScore = 99999999999 # Pacman wants to MAX score
             for move in moves:
                 successor = state.generateSuccessor(agentIndex,move)
                 score = alphabeta(successor, depth-1, alpha, beta, 0)
                 bestScore = min(score, bestScore)
                 if bestScore < alpha:
-                    break
-                    # return bestScore
+                    # break
+                    return bestScore
                 beta = min(bestScore, beta)
+        print bestScore
         return bestScore
 
     moves = gameState.getLegalActions(0) # get moves to choose from
@@ -245,7 +246,6 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
     alpha = -99999999999
     beta = 99999999999
 
-    print moves
     for move in moves:
         successor = gameState.generateSuccessor(0,move) # Pacman goes first
         score = alphabeta(successor, self.depth, alpha, beta, 1)
