@@ -164,11 +164,11 @@ class MinimaxAgent(MultiAgentSearchAgent):
                 score = minimax(successor, depth, agentIndex+1)
                 bestScore = min(score, bestScore)
         elif agentIndex == totalGhosts:
-            bestScore = -99999999999 # Pacman wants to MAX score
+            bestScore = 99999999999 # Last Ghost's turn
             for move in moves:
                 successor = state.generateSuccessor(agentIndex,move)
                 score = minimax(successor, depth-1, 0)
-                bestScore = max(score, bestScore)
+                bestScore = min(score, bestScore)
         return bestScore
 
     moves = gameState.getLegalActions(0) # get moves to choose from
@@ -213,8 +213,8 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 score = alphabeta(successor, depth, alpha, beta, 1)
                 bestScore = max(score, bestScore)
                 if bestScore > beta:
-                    # break
-                    return bestScore
+                    break
+                    # return bestScore
                 alpha = max(bestScore, alpha)
         elif agentIndex > 0 and agentIndex < totalGhosts:
             bestScore = 999999999999 # Ghosts want to MIN score
@@ -223,8 +223,8 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 score = alphabeta(successor, depth, alpha, beta, agentIndex+1)
                 bestScore = min(score, bestScore)
                 if bestScore < alpha:
-                    # break
-                    return bestScore
+                    break
+                    # return bestScore
                 beta = min(bestScore, beta)
         elif agentIndex == totalGhosts:
             bestScore = 99999999999 # Pacman wants to MAX score
@@ -233,10 +233,10 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 score = alphabeta(successor, depth-1, alpha, beta, 0)
                 bestScore = min(score, bestScore)
                 if bestScore < alpha:
-                    # break
-                    return bestScore
+                    break
+                    # return bestScore
                 beta = min(bestScore, beta)
-        print bestScore
+        # print bestScore
         return bestScore
 
     moves = gameState.getLegalActions(0) # get moves to choose from
