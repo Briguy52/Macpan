@@ -200,6 +200,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
     def alphabeta(state, depth, alpha, beta, agentIndex):
         # evaluate if at a leaf
+        print agentIndex
         if depth == 0 or state.isWin() or state.isLose():
             return self.evaluationFunction(state)
 
@@ -219,7 +220,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             bestScore = 999999999999 # Ghosts want to MIN score
             for move in moves:
                 successor = state.generateSuccessor(agentIndex,move)
-                score = (successor, depth, alpha, beta, agentIndex+1)
+                score = alphabeta(successor, depth, alpha, beta, agentIndex+1)
                 bestScore = min(score, bestScore)
                 if bestScore < alpha:
                     # break
@@ -235,6 +236,9 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                     # break
                     return bestScore
                 beta = min(bestScore, beta)
+        print agentIndex
+        print totalGhosts
+        print bestScore
         return bestScore
 
     moves = gameState.getLegalActions(0) # get moves to choose from
