@@ -157,8 +157,6 @@ class MinimaxAgent(MultiAgentSearchAgent):
             successor = state.generateSuccessor(0,move)
             score = getMin(successor, depth, 1)
             bestScore = max(score, bestScore)
-        print bestScore
-        raw_input("hey")
         return bestScore
 
     def getMin(state, depth, agentIndex):
@@ -185,6 +183,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
     for move in moves:
         successor = gameState.generateSuccessor(0,move) # Pacman goes first
         score = getMin(successor, self.depth, 1)
+        print score
         if score > bestScore:
             bestMove = move
             bestScore = score
@@ -254,13 +253,13 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
     for move in moves:
         successor = gameState.generateSuccessor(0,move) # Pacman goes first
         score = alphabeta(successor, self.depth, alpha, beta, 1)
+        print score
         if score > bestScore:
             bestMove = move
             bestScore = score
         if bestScore > beta:
             return bestMove
         alpha = max(bestScore, alpha)
-    print bestScore
     return bestMove
     util.raiseNotDefined()
 
