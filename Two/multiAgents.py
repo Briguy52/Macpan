@@ -155,22 +155,21 @@ class MinimaxAgent(MultiAgentSearchAgent):
         bestScore = -99999999999 # Pacman wants to MAX score
         for move in moves:
             successor = state.generateSuccessor(0, move)
-            bestScore = max(bestScore, getMin(successor, depth, totalGhosts))
+            bestScore = max(bestScore, getMin(successor, depth, 1))
         return bestScore
 
     def getMin(state, depth, agentIndex):
         if depth == 0 or state.isWin() or state.isLose():
             return self.evaluationFunction(state)
 
-        if agentIndex == 0:
+        if agentIndex == totalGhosts+1:
             return getMax(state, depth-1)
-        # elif agentIndex > 0 and agentIndex < totalGhosts:
         else:
             bestScore = 999999999999 # Ghosts want to MIN score
             moves = state.getLegalActions(agentIndex) # get moves to choose from
             for move in moves:
                 successor = state.generateSuccessor(agentIndex,move)
-                bestScore = min(bestScore, getMin(successor, depth, agentIndex-1))
+                bestScore = min(bestScore, getMin(successor, depth, agentIndex+1))
             return bestScore
 
 
@@ -181,7 +180,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
     for move in moves:
         successor = gameState.generateSuccessor(0,move) # Pacman goes first
-        score = getMin(successor, self.depth, totalGhosts)
+        score = getMin(successor, self.depth, 1)
         if score > bestScore:
             bestMove = move
             bestScore = score
@@ -215,41 +214,24 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             if bestScore >= beta:
                 return bestScore
             alpha = max(bestScore, alpha)
-        # print bestScore
-        # raw_input("")
         return bestScore
 
     def getMin(state, depth, agentIndex, alpha, beta):
         if depth == 0 or state.isWin() or state.isLose():
             return self.evaluationFunction(state)
-        bestScore = 9999999999999
-        moves = state.getLegalActions(agentIndex)
-        for move in moves:
-            if agentIndex == totalGhosts:
-                bestScore = min(bestScore, getMax(state, depth-1, alpha, beta))
-            elif agentIndex > 0 and agentIndex < totalGhosts:
-                bestScore = min(bestScore, getMin(state, depth, agentIndex+1, alpha, beta))
-            if bestScore <= alpha:
-                return bestScore
-            beta = min(bestScore, beta)
-        # print bestScore
-        # raw_input("")
-        return bestScore
 
-
-        # if agentIndex == totalGhosts:
-        #     return getMax(state, depth-1, alpha, beta)
-        # elif agentIndex > 0 and agentIndex < totalGhosts:
-        #     bestScore = 999999999999 # Ghosts want to MIN score
-        #     moves = state.getLegalActions(agentIndex) # get moves to choose from
-        #     for move in moves:
-        #         successor = state.generateSuccessor(agentIndex,move)
-        #         bestScore = min(bestScore, getMin(successor, depth, agentIndex+1, alpha, beta))
-        #         if bestScore <= alpha:
-        #             return bestScore
-        #         beta = min(bestScore, beta)
-        #     return bestScore
-
+        if agentIndex == totalGhosts+1:
+            return getMax(state, depth-1, alpha, beta)
+        else:
+            bestScore = 999999999999 # Ghosts want to MIN score
+            moves = state.getLegalActions(agentIndex) # get moves to choose from
+            for move in moves:
+                successor = state.generateSuccessor(agentIndex,move)
+                bestScore = min(bestScore, getMin(successor, depth, agentIndex+1, alpha, beta))
+                if bestScore <= alpha:
+                    return bestScore
+                beta = min(bestScore, beta)
+            return bestScore
 
     moves = gameState.getLegalActions(0) # get moves to choose from
 
@@ -260,14 +242,14 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
     for move in moves:
         successor = gameState.generateSuccessor(0,move) # Pacman goes first
-        score = max(bestScore, getMin(successor, self.depth, 1, alpha, beta))
-        print score
+        score = getMin(successor, self.depth, 1, alpha, beta)
         if score > bestScore:
             bestMove = move
             bestScore = score
         if bestScore >= beta:
             return bestMove
         alpha = max(bestScore, alpha)
+    print bestScore
     return bestMove
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
@@ -283,6 +265,52 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
       legal moves.
     """
     "*** YOUR CODE HERE ***"
+    numAgents = gameState.getNumAgents()
+    totalGhosts = numAgents - 1
+
+    def getMax(state, depth):
+        if depth == 0 or state.isWin() or state.isLose():
+            return self.evaluationFunction(state)
+
+        moves = state.getLegalActions(0) # get moves to choose from
+        bestScore = -99999999999 # Pacman wants to MAX score
+        for move in moves:
+            successor = state.generateSuccessor(0, move)
+            bestScore = max(bestScore, getMin(successor, depth, 1))
+        return bestScore
+
+    def getMin(state, depth, agentIndex):
+        if depth == 0 or state.isWin() or state.isLose():
+            return self.evaluationFunction(state)
+
+        bestScore = 0
+        if agentIndex == totalGhosts+1:
+            moves = state.getLegalActions(0) # get moves to choose from
+            bestScore += getMax(state, depth-1)
+
+        else:
+            moves = state.getLegalActions(agentIndex) # get moves to choose from
+            for move in moves:
+                successor = state.generateSuccessor(agentIndex,move)
+                bestScore += getMin(successor, depth, agentIndex+1)
+
+        return bestScore/len(moves)
+
+
+    moves = gameState.getLegalActions(0) # get moves to choose from
+
+    bestMove = Directions.STOP # always valid
+    bestScore = -99999999999
+
+    for move in moves:
+        successor = gameState.generateSuccessor(0,move) # Pacman goes first
+        score = getMin(successor, self.depth, 1)
+        if score > bestScore:
+            bestMove = move
+            bestScore = score
+    return bestMove
+
+
     util.raiseNotDefined()
 
 def betterEvaluationFunction(currentGameState):
