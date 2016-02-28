@@ -164,7 +164,8 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
         if agentIndex == totalGhosts:
             return getMax(state, depth-1)
-        elif agentIndex > 0 and agentIndex < totalGhosts:
+        # elif agentIndex > 0 and agentIndex < totalGhosts:
+        else:
             bestScore = 999999999999 # Ghosts want to MIN score
             moves = state.getLegalActions(agentIndex) # get moves to choose from
             for move in moves:
@@ -203,10 +204,6 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
     # pseudocode from: https://courses.cs.washington.edu/courses/cse473/12sp/slides/09-alphabeta.pdf
     def getMax(state, depth, alpha, beta):
-        print state
-        print depth
-        print alpha
-        print beta
         if depth == 0 or state.isWin() or state.isLose():
             return self.evaluationFunction(state)
 
@@ -218,8 +215,8 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             if bestScore >= beta:
                 return bestScore
             alpha = max(bestScore, alpha)
-        print bestScore
-        raw_input("")
+        # print bestScore
+        # raw_input("")
         return bestScore
 
     def getMin(state, depth, agentIndex, alpha, beta):
@@ -235,8 +232,8 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             if bestScore <= alpha:
                 return bestScore
             beta = min(bestScore, beta)
-        print bestScore
-        raw_input("")
+        # print bestScore
+        # raw_input("")
         return bestScore
 
 
