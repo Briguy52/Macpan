@@ -73,7 +73,7 @@ class ReflexAgent(Agent):
     if successorGameState.isWin():
         return 99999999
     if successorGameState.isLose():
-        return -9999999
+        return -99999999
 
     distanceFromGhosts = 0
     for i in newGhostStates:
@@ -161,8 +161,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
     def getMin(state, depth, agentIndex):
         if depth == 0 or state.isWin() or state.isLose():
             return self.evaluationFunction(state)
-
-        if agentIndex == totalGhosts+1:
+        if agentIndex > totalGhosts: # run out of ghosts, call Pacman
             return getMax(state, depth-1)
         else:
             bestScore = 999999999999 # Ghosts want to MIN score
@@ -184,7 +183,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         if score > bestScore:
             bestMove = move
             bestScore = score
-    print bestScore
+    # print bestScore
     return bestMove
 
     util.raiseNotDefined()
@@ -220,7 +219,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         if depth == 0 or state.isWin() or state.isLose():
             return self.evaluationFunction(state)
 
-        if agentIndex == totalGhosts+1:
+        if agentIndex > totalGhosts: # run out of ghosts, call Pacman
             return getMax(state, depth-1, alpha, beta)
         else:
             bestScore = 999999999999 # Ghosts want to MIN score
@@ -249,7 +248,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         if bestScore >= beta:
             return bestMove
         alpha = max(bestScore, alpha)
-    print bestScore
+    # print bestScore
     return bestMove
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
@@ -284,7 +283,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             return self.evaluationFunction(state)
 
         bestScore = 0
-        if agentIndex == totalGhosts+1:
+        if agentIndex > totalGhosts: # run out of ghosts, call Pacman
             moves = state.getLegalActions(0) # get moves to choose from
             bestScore += getMax(state, depth-1)
 
