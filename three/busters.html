@@ -1,0 +1,245 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+        <title>Homework 4: Bayesian Networks and Ghostbusters</title>
+        <link type="text/css" rel="stylesheet" href="projects.css">
+    </head>
+    <body>
+
+<div>
+
+<h2>Homework 4: Bayesian Networks and Ghostbusters</h2>
+
+<!--announcements-->
+
+<blockquote>
+<center>
+<img src="busters.png" alt="GHOSTBUSTERS" width="400px" id="exifviewer-img-3" exifid="2033773478" oldsrc="busters.png">
+</center>
+  <p><cite></cite></p><center>I can hear you, ghost.<br>
+  Running won't save you from my<br>
+  Particle filter!</center><p></p>
+</blockquote>	
+
+
+<h3>HMM basics</h3>
+
+Consider and HMM with two states s1 and s2.  The transition model is:
+      P(s1|s1) = 0.5, P(s1|s2) = 0.25.  (Note that the time stamps on
+      the states are implicit in this way of writing out the model.)
+      The HMM has two observations, with
+      P(a|s1) = 0.25 and P(a|s2) = 0.5.  We will assume that the
+      initial state at time 0 is s1.
+
+<p><em><strong>Question 1 (10 points)</strong></em> Compute (showing your
+	work) the predicted distribution over states at time 2. (This is the case where we have not made any observations yet.)
+</p>
+
+
+<p><em><strong>Question 2 (10 points)</strong></em> Suppose that the
+	observation at time 1 is a, and the observation at time 2 is b.
+	Compute (showing your work) the distribution over states at time 2
+	after making these observations.
+</p>
+
+
+<p><em><strong>Question 3 (10 points)</strong></em> Compute the smoothed state distribution at time step 1 after observing a at time step 1 and b at time step 2.
+</p>
+
+  
+  
+<h3>Ghostbusters Introduction</h3>
+<p>Pacman spends his life running from ghosts, but things were not always so. Legend has it that many years
+ago, Pacman's great grandfather Grandpac learned to hunt ghosts for sport. However, he was blinded by his
+power and could only track ghosts by their banging and clanging.</p>
+
+<p>In this assignment, you will design Pacman agents that use sensors to 
+locate and eat invisible ghosts. You'll advance from locating single,
+stationary ghosts to hunting packs of 
+multiple moving ghosts with ruthless efficiency.</p>
+
+<p>The code for this assignment contains the following files, 
+available as a <a href="tracking.zip">zip archive</a>.</p>
+
+<h5><b> Files you will edit </b></h5> 
+
+<table border="0" cellpadding="10">
+  <tbody><tr>
+    <td><code>bustersAgents.py</code></td>
+    <td>Agents for playing the Ghostbusters variant of Pacman.</td>
+  </tr>
+  <tr>
+    <td><code>inference.py</code></td>
+    <td>Code for tracking ghosts over time using their sounds.</td>
+  </tr>
+</tbody></table>
+  
+<h5><b> Files you will not edit </b></h5> 
+
+<table border="0" cellpadding="10">
+  
+  <tbody><tr>
+    <td><code>busters.py</code></td>
+    <td>The main entry to Ghostbusters (replacing Pacman.py) </td>
+  </tr>
+    <tr><td><code>bustersGhostAgents.py</code></td>
+  <td>New ghost agents for Ghostbusters</td></tr>
+  
+    <tr><td><code>distanceCalculator.py</code></td>
+  <td>Computes maze distances</td></tr>
+
+    <tr><td><code>game.py</code></td>
+  <td>Inner workings and helper classes for Pacman</td></tr>
+
+    <tr><td><code>ghostAgents.py</code></td>
+  <td>Agents to control ghosts</td></tr>
+
+  <tr><td><code>graphicsDisplay.py</code></td>
+   <td>Graphics for Pacman</td></tr>
+
+     <tr><td><code>graphicsUtils.py</code></td>
+   <td>Support for Pacman graphics</td></tr>
+
+
+     <tr><td><code>keyboardAgents.py</code></td>
+   <td>Keyboard interfaces to control Pacman</td></tr>
+
+     <tr><td><code>layout.py</code></td>
+   <td>Code for reading layout files and storing their contents</td></tr>
+
+     <tr><td><code>util.py</code></td>
+   <td>Utility functions</td></tr>
+
+</tbody></table>
+
+<p> </p><p><strong>What to submit:</strong> You will fill in portions of <code>bustersAgents.py</code> and
+<code>inference.py</code> during the assignment. You should submit this file with your code and comments.
+Please <em>do not</em> change the other files in this distribution or submit any of our original files other
+than <code>inference.py</code> and <code>bustersAgents.py</code>.
+
+</p><p><strong>Evaluation:</strong> Your code will be autograded for technical
+correctness. Please <em>do not</em> change the names of any provided functions or classes within the code, 
+or you will wreak havoc on the autograder. However, the correctness of your implementation -- not the 
+autograder's judgements -- will be the final judge of your score.  If necessary, we will review and grade 
+assignments individually to ensure that you receive due credit for your work.
+
+
+</p><h3>Ghostbusters and HMMs</h3>
+<p>In our version of Ghostbusters, the goal is to hunt down scared but invisible ghosts. 
+Pacman, ever resourceful, is equipped with sonar (ears) that provides noisy readings of the 
+Manhattan distance to each ghost. The game ends when Pacman has eaten all the ghosts.  
+To start, try playing a game yourself using the keyboard.
+
+</p><pre>  python busters.py</pre>
+
+<p>The blocks of color indicate where the each ghost could possibly be, given the noisy distance 
+readings provided to Pacman.  The noisy distances at the bottom of the display are always non-negative, 
+and always within 7 of the true distance.  The probability of a distance reading decreases exponentially 
+with its difference from the true distance.  
+        
+</p><p>Your primary implementation task in this assignment is to implement inference to track the ghosts.  
+A crude form of inference is implemented for you by default: all squares in which a 
+ghost could possibly be are shaded by the color of the ghost.      
+</p><pre>  python busters.py -k 1</pre>
+
+<p>Naturally, we want a better estimate of the ghost's position.  We will start by locating a 
+single, stationary ghost using multiple noisy distance readings. The default 
+<code>BustersKeyboardAgent</code> in <code>bustersAgents.py</code> uses the 
+<code>ExactInference</code> module in <code>inference.py</code> to track ghosts.  
+<i>Hint:</i>As you're debugging, you'll find it useful to actually see where the ghost is. Use option <code>-s</code>, when running Pacman
+</p><pre>  python busters.py -s -k 1</pre>
+
+ 
+<p><em><strong>Question 4 (10 points)</strong></em>  Update the <code>observe</code> method in 
+<code>ExactInference</code> class of <code>inference.py</code> to correctly update the agent's 
+belief distribution over ghost positions. A correct implementation should also handle one special case: when a ghost is eaten, you should place that ghost in its prison cell, as described in the comments of <code>observe</code>. When complete, you should be able to accurately locate a 
+ghost by circling it.
+
+</p><pre>  python busters.py -s -k 1 -g StationaryGhost</pre>
+
+<p> Because the default <code>StationaryGhost</code> ghost agents don't move,
+you can track each one separately.  The default <code>BustersKeyboardAgent</code> is set up to 
+do this for you.  Hence, you should be able to locate multiple stationary ghosts simultaneously.  
+Encircling the ghosts should give you precise distributions over the ghosts' locations.
+
+</p><pre>  python busters.py -s -g StationaryGhost</pre>
+
+<p> <em>Note:</em>  your busters agents have a separate inference module for each ghost they are tracking.
+That's why if you print an observation inside the <code>observe</code> function, you'll only see a
+single number even though there may be multiple ghosts on the board.
+
+</p><p>
+Hints: 
+</p><ul>
+    <li>You are implementing the online belief update for observing new evidence. Before
+    	any readings, Pacman believes the ghost could be anywhere: a uniform prior (see 
+    	<code>initializeUniformly</code>). After receiving a reading, the 
+    	<code>observe</code> function is called, which must update the belief at every
+    	position.
+    </li><li>Before typing any code, write down the equation of the inference problem you are 
+    	trying to solve.
+    </li><li>Try printing <code>noisyDistance</code>, <code>emissionModel</code>, and 
+    	<code>PacmanPosition</code> (in the <code>observe</code> function) to get
+    	started.
+    </li><li>In the Pacman display, high posterior beliefs are represented by bright colors, 
+    	while low beliefs are represented by dim colors.  You should start with a large 
+    	cloud of belief that shrinks over time as more evidence accumulates.
+    </li><li>Beliefs are stored as <code>util.Counter</code> objects (like dictionaries) in a 
+    	field called <code> self.beliefs</code>, which you should update.
+    </li><li>You should not need to store any evidence.  The only thing you need to store in     
+    	<code>ExactInference</code> is <code>self.beliefs</code>.
+</li></ul>
+
+
+
+
+<p> Ghosts don't hold still forever.  Fortunately, your agent has access to the action distribution 
+for any <code>GhostAgent</code>.  Your next task is to use the ghost's move distribution to update 
+your agent's beliefs when time elapses and ghosts move.
+
+
+</p><p><strong><em>Question 5 (10 points) </em></strong> Fill in the <code>elapseTime</code> method in 
+<code>ExactInference</code> to correctly update the agent's belief distribution over the ghost's 
+position when the ghost moves.  When complete, you should be able to accurately locate moving ghosts, 
+but some uncertainty will always remain about a ghost's position as it moves. To test it out, you can 
+use the <code>DirectionalGhost</code> ghost agent, which causes the ghosts to move in a somewhat
+predictable fashion. If you don't include <code>-g DirectionalGhost</code>, then the ghost will
+move randomly, which will be harder to track, though it should still be possible.
+
+</p><pre>  python busters.py -s -k 1 -g DirectionalGhost</pre>
+<pre>  python busters.py -s -k 1</pre>
+    
+<p>Hints: 
+</p><ul>
+<li> Instructions for obtaining a distribution over where a ghost will go next, given its current 
+	position and the <code>gameState</code>, appears in the comments of 
+	<code>ExactInference.elapseTime</code> in <code>inference.py</a></code>.
+</li><li> A <code>DirectionalGhost</code> is easier to track because it is more predictable.  
+	After running away from one for a while, your agent should have a good idea where it is.
+</li><li> We assume that ghosts still move independently of one another, so while you can develop all 
+	of your code for one ghost at a time, adding multiple ghosts should still work correctly.
+</li></ul>
+
+<p>Now that Pacman can track ghosts, try playing without peeking at the ghost locations.  Beliefs about each ghost will be overlaid on the screen.  The game should be challenging, but not impossible.
+
+</p><pre>  python busters.py -l bigHunt</pre>
+
+<p>Now, Pacman is ready to hunt down ghosts on his own. You will implement a simple greedy hunting strategy, where Pacman assumes that each ghost is in its most likely position according to its beliefs, then moves toward the closest ghost.  
+
+</p><p><strong><em>Question 6 (10 points) </em></strong> Implement the <code>chooseAction</code> method in <code>GreedyBustersAgent</code> in <code>bustersAgents.py</code>.  Your agent should first find the most likely position of each remaining (uncaptured) ghost, then choose an action that minimizes the distance to the closest ghost.  If correctly implemented, your
+agent should win <code>smallHunt</code> with a score greater than 700 at least
+8 out of 10 times. <em>Note:</em> the autograder will check the
+correctness of your inference directly, not the outcome of games, but it's a reasonable sanity check.
+    
+</p><pre>  python busters.py -p GreedyBustersAgent -l smallHunt</pre>
+    
+Hints: 
+<ul>
+    <li> When correctly implemented, your agent will thrash around a bit in order to capture a ghost.
+    </li><li> The comments of <code>chooseAction</code> provide you with useful method calls for computing maze distance and successor positions.
+    </li><li> Make sure to only consider the living ghosts, as described in the comments.
+</li></ul>
+
+
+</p></div><a style="display: none; " id="exifview-absolute-url-convert-proxy" href="http://www.cs.duke.edu/courses/spring14/compsci270/hw5/tracking_files/busters.png"></a><div class="exifviewerui-template-lite" style="max-width: 492px; left: 184px; top: 3941px; opacity: 0; " id="exifviewerui-template-lite-for--1106265917">EXIF not found</div><div class="exifviewerui-template-lite" style="left: 184px; top: 4438px; max-width: 492px; opacity: 0; " id="exifviewerui-template-lite-for--340876454">EXIF not found</div><div class="exifviewerui-template-lite" style="max-width: 392px; left: 239px; top: 78px; opacity: 0; " id="exifviewerui-template-lite-for-2033773478">EXIF not found</div></body><style type="text/css">embed[type*="application/x-shockwave-flash"],embed[src*=".swf"],object[type*="application/x-shockwave-flash"],object[codetype*="application/x-shockwave-flash"],object[src*=".swf"],object[codebase*="swflash.cab"],object[classid*="D27CDB6E-AE6D-11cf-96B8-444553540000"],object[classid*="d27cdb6e-ae6d-11cf-96b8-444553540000"],object[classid*="D27CDB6E-AE6D-11cf-96B8-444553540000"]{	display: none !important;}</style><link rel="stylesheet" type="text/css" href="data:text/css,"></html>
+

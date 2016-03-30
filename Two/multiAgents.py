@@ -183,7 +183,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         if score > bestScore:
             bestMove = move
             bestScore = score
-    # print bestScore
+    print bestScore
     return bestMove
 
     util.raiseNotDefined()
