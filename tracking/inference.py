@@ -126,14 +126,12 @@ class ExactInference(InferenceModule):
     emissionModel = busters.getObservationDistribution(noisyDistance)
     pacmanPosition = gameState.getPacmanPosition()
 
-    # print noisyDistance
-    # print emissionModel
-    # print pacmanPosition
-    # print self.getJailPosition()
-
     "*** YOUR CODE HERE ***"
     # Replace this code with a correct observation update
     # Be sure to handle the jail.
+
+    # truePosition = state
+    # noisy
 
     allPossible = util.Counter()
     # jail edge case
